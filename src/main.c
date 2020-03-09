@@ -3,8 +3,8 @@
 
 #include "../include/diseaseMonitor.h"
 
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[])
+{
     size_t bucketSize = 0;
     int diseaseHTEntries = 0, countryHTEntries = 0;
     char* fileName = NULL;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if(DM_Init(fileName, &diseaseHTEntries, &countryHTEntries, &bucketSize) == -1) {
+    if(DM_Init(fileName, diseaseHTEntries, countryHTEntries, bucketSize) == -1) {
         printf("DM_Init failed\n");
         return -1;
     }

@@ -3,6 +3,6 @@
 
 #include <stdio.h>
 
-int DM_Init(const char* fileName, const int* diseaseHTEntries, const int* countryHTEntries, const size_t* bucketSize);
+int DM_Init(const char* fileName, const int diseaseHTEntries, const int countryHTEntries, const size_t bucketSize);
 
 #endif
