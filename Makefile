@@ -9,10 +9,10 @@ SDIR = src
 
 EXECUTABLE = diseaseMonitor
 
-_DEPS = 
+_DEPS = diseaseMonitor.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o
+_OBJ = main.o diseaseMonitor.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
@@ -24,10 +24,10 @@ $(BDIR)/$(EXECUTABLE): $(OBJ)
 .PHONY: clean run valgrind
 
 run:
-	./$(BDIR)/$(EXECUTABLE)
+	./$(BDIR)/$(EXECUTABLE) -p small.txt -h1 10 -h2 15 -b 23
 
 valgrind:
-	valgrind ./$(BDIR)/$(EXECUTABLE)
+	valgrind ./$(BDIR)/$(EXECUTABLE) -p HELLO -h1 10 -h2 15 -b 23
 
 clean:
 	rm -f $(ODIR)/*.o

@@ -1,4 +1,5 @@
 .vscode/*
 
-bin/runner
+bin/*
+!bin/.gitkeep
 build/*.o
