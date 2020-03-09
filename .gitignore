@@ -1,0 +1,4 @@
+.vscode/*
+
+bin/runner
+build/*.o
