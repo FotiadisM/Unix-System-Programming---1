@@ -1,11 +1,21 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "../include/Date.h"
 
-void Date_Init(DatePtr date, const char* info)
+DatePtr Date_Init(DatePtr date, const char* info)
 {
-    char* s = malloc(sizeof(info));
+    char *s = NULL;
+
+    if((date = malloc(sizeof(Date))) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+    if((s = malloc(strlen(info) + 1)) == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
 
     strcpy(s, info);
 
@@ -14,4 +24,6 @@ void Date_Init(DatePtr date, const char* info)
     date->year = atoi(strtok(NULL, "-"));
 
     free(s);
+
+    return date;
 }

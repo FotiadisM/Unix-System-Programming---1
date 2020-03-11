@@ -1,13 +1,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../include/HashTable.h"
 #include "../include/diseaseMonitor.h"
 
 int main(int argc, char *argv[])
 {
+    char* fileName = NULL;
     size_t bucketSize = 0;
     int diseaseHTEntries = 0, countryHTEntries = 0;
-    char* fileName = NULL;
+    HashTablePtr diseaseHT = NULL, countryHT = NULL;
 
     if(argc < 9) {
         printf("Wrong Usage");
@@ -17,7 +19,7 @@ int main(int argc, char *argv[])
     for(int i=1; i < argc; i++) {
         if(!strcmp(argv[i], "-p")) {
             i++;    // malloc(sizeof(argv[++i])) doesn't seem to work
-            if((fileName = malloc(sizeof(argv[i]))) == NULL) {
+            if((fileName = malloc(strlen(argv[i]) + 1)) == NULL) {
                 perror("malloc failed");
                 return -1;
             }
@@ -48,10 +50,21 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(DM_Init(fileName, diseaseHTEntries, countryHTEntries, bucketSize) == -1) {
+    if((diseaseHT = HashTable_Init(diseaseHT, diseaseHTEntries, bucketSize)) == NULL) {
+        return -1;
+    }
+    if((countryHT = HashTable_Init(countryHT, countryHTEntries, bucketSize)) == NULL) {
+        return -1;
+    }
+
+    if(DM_Init(fileName, diseaseHT, countryHT) == -1) {
         printf("DM_Init failed\n");
         return -1;
     }
+
+    HashTable_Close(diseaseHT);
+    HashTable_Close(countryHT);
+
 
     free(fileName);
 

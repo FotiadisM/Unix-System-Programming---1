@@ -1,43 +1,44 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "../include/HashTable.h"
 
-int HashTable_Init(HashTablePtr ht, const int size)
+HashTablePtr HashTable_Init(HashTablePtr ht, const int size, const int bucketSize)
 {
     if((ht = malloc(sizeof(HashTable))) == NULL) {
         perror("malloc failed");
-        return -1;
+        return NULL;
     }
 
     ht->size = size;
     ht->elements = 0;
+    ht->bucketSize = bucketSize;
 
-    if((ht->table = malloc(size*sizeof(HashEntryPtr))) == NULL) {
+    if((ht->table = malloc(size*sizeof(HashNode))) == NULL) {
         perror("malloc failed");
-        return -1;
+        return NULL;
     }
 
     for(int i=0; i < size; i++) {
-        ht->table[i] = NULL;
+        ht->table[i].elements = 0;
+        ht->table[i].entry = NULL;
     }
 
-    return 0;
+    return ht;
 }
 
 void HashTable_Close(HashTablePtr ht)
 {
-    HashEntryPtr ptr = NULL;
+    HashEntryPtr tmpHashEntry = NULL;
 
     for(int i=0; i < ht->size; i++) {
-        if(ht->table[i] != NULL) {
-            // ptr = ht->table[i];
-            // ht->table[i] = ptr->next;
-            // if(ptr->value != NULL) {
-            //     Patient_Close(ptr->value);
-            //     free(ptr->value);
-            // }
-            // free(ptr);
+        while(ht->table[i].entry != NULL) {
+            tmpHashEntry = ht->table[i].entry;
+            ht->table[i].entry = tmpHashEntry->next;
+            free(tmpHashEntry->value);
+            free(tmpHashEntry);
         }
     }
+
+    free(ht->table);
+    free(ht);
 }

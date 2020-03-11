@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
-int DM_Init(const char* fileName, const int diseaseHTEntries, const int countryHTEntries, const size_t bucketSize);
+#include "Patient.h"
+
+int DM_Init(const char* fileName, HashTablePtr h1, HashTablePtr h2);
+
+PatientPtr DM_GetPatient(FILE *filePtr);
 
 #endif

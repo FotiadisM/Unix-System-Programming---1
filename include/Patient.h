@@ -15,7 +15,7 @@ typedef struct Patient {
 
 typedef Patient* PatientPtr;
 
-int Patient_Init(PatientPtr patient);
+PatientPtr Patient_Init(char *line);
 
 void Patient_Close(PatientPtr patient);
 

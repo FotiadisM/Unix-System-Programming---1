@@ -1,17 +1,20 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
+#include <stdio.h>
+
 #include "./Patient.h"
 
 typedef struct HashEntry {
-    PatientPtr value;
+    PatientPtr *value;
     struct HashEntry *next;
 } HashEntry;
 
 typedef HashEntry* HashEntryPtr;
 
 typedef struct HashNode {
-    HashEntryPtr *entry;
+    int elements;
+    HashEntryPtr entry;
 } HashNode;
 
 typedef HashNode* HashNodePtr;
@@ -19,12 +22,13 @@ typedef HashNode* HashNodePtr;
 typedef struct HashTable {
     int size;
     int elements;
-    HashEntryPtr *table;
+    size_t bucketSize;
+    HashNodePtr table;
 } HashTable;
 
 typedef HashTable* HashTablePtr;
 
-int HashTable_Init(HashTablePtr ht, const int size);
+HashTablePtr HashTable_Init(HashTablePtr ht, const int size, const int bucketSize);
 
 void HashTable_Close(HashTablePtr ht);
 
