@@ -19,4 +19,6 @@ PatientPtr Patient_Init(char *line);
 
 void Patient_Close(PatientPtr patient);
 
+void Patient_Print(PatientPtr patient);
+
 #endif

@@ -4,26 +4,18 @@
 
 #include "../include/Date.h"
 
-DatePtr Date_Init(DatePtr date, const char* info)
+DatePtr Date_Init(char* info)
 {
-    char *s = NULL;
+    DatePtr date = NULL;
 
     if((date = malloc(sizeof(Date))) == NULL) {
         perror("malloc failed");
         return NULL;
     }
-    if((s = malloc(strlen(info) + 1)) == NULL) {
-        perror("malloc failed");
-        return NULL;
-    }
 
-    strcpy(s, info);
-
-    date->day = atoi(strtok(s, "-"));
+    date->day = atoi(strtok(info, "-"));
     date->month = atoi(strtok(NULL, "-"));
-    date->year = atoi(strtok(NULL, "-"));
-
-    free(s);
+    date->year = atoi(strtok(NULL, " "));
 
     return date;
 }

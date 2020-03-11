@@ -1,10 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/HashTable.h"
 #include "../include/diseaseMonitor.h"
 
-int DM_Init(const char* fileName, HashTablePtr h1, HashTablePtr h2)
+int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2)
 {
     char *dest = NULL;
     FILE *filePtr = NULL;
@@ -24,9 +23,8 @@ int DM_Init(const char* fileName, HashTablePtr h1, HashTablePtr h2)
 
     while((patient = DM_GetPatient(filePtr)) != NULL)
     {
-        printf("id: %s, name: %s %s, disease: %s, country: %s\n", patient->id, patient->fName, patient->lName, patient->diseaseID, patient->country);
-
-        free(patient);
+        Patient_Print(patient);
+        List_Insert(list, patient);
     }
 
     free(dest);
@@ -40,7 +38,6 @@ PatientPtr DM_GetPatient(FILE *filePtr)
     char *line = NULL;
     size_t len = 0;
     PatientPtr patient = NULL;
-
 
     if(getline(&line, &len, filePtr) == -1) {
         free(line);

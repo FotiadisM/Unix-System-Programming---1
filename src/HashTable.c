@@ -2,8 +2,10 @@
 
 #include "../include/HashTable.h"
 
-HashTablePtr HashTable_Init(HashTablePtr ht, const int size, const int bucketSize)
+HashTablePtr HashTable_Init(const int size, const int bucketSize)
 {
+    HashTablePtr ht = NULL;
+
     if((ht = malloc(sizeof(HashTable))) == NULL) {
         perror("malloc failed");
         return NULL;
@@ -41,4 +43,16 @@ void HashTable_Close(HashTablePtr ht)
 
     free(ht->table);
     free(ht);
+}
+
+unsigned long hash(char *str)
+{
+    int c;
+    unsigned long hash = 5381;
+
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+
+    return hash;
 }

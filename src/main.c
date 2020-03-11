@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../include/List.h"
 #include "../include/HashTable.h"
 #include "../include/diseaseMonitor.h"
 
@@ -9,6 +10,7 @@ int main(int argc, char *argv[])
     char* fileName = NULL;
     size_t bucketSize = 0;
     int diseaseHTEntries = 0, countryHTEntries = 0;
+    ListPtr list = NULL;
     HashTablePtr diseaseHT = NULL, countryHT = NULL;
 
     if(argc < 9) {
@@ -50,18 +52,23 @@ int main(int argc, char *argv[])
         }
     }
 
-    if((diseaseHT = HashTable_Init(diseaseHT, diseaseHTEntries, bucketSize)) == NULL) {
-        return -1;
-    }
-    if((countryHT = HashTable_Init(countryHT, countryHTEntries, bucketSize)) == NULL) {
+    if((list = List_Init()) == NULL) {
         return -1;
     }
 
-    if(DM_Init(fileName, diseaseHT, countryHT) == -1) {
+    if((diseaseHT = HashTable_Init(diseaseHTEntries, bucketSize)) == NULL) {
+        return -1;
+    }
+    if((countryHT = HashTable_Init(countryHTEntries, bucketSize)) == NULL) {
+        return -1;
+    }
+
+    if(DM_Init(fileName, list, diseaseHT, countryHT) == -1) {
         printf("DM_Init failed\n");
         return -1;
     }
 
+    List_Close(list);
     HashTable_Close(diseaseHT);
     HashTable_Close(countryHT);
 

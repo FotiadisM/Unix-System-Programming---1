@@ -9,6 +9,6 @@ typedef struct Date {
 
 typedef Date* DatePtr;
 
-DatePtr Date_Init(DatePtr date, const char* info);
+DatePtr Date_Init(char* info);
 
 #endif
