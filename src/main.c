@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../include/AVL.h"
 #include "../include/List.h"
 #include "../include/HashTable.h"
 #include "../include/diseaseMonitor.h"
@@ -11,6 +12,7 @@ int main(int argc, char *argv[])
     size_t bucketSize = 0;
     int diseaseHTEntries = 0, countryHTEntries = 0;
     ListPtr list = NULL;
+    AVLTreePtr tree = NULL;
     HashTablePtr diseaseHT = NULL, countryHT = NULL;
 
     if(argc < 9) {
@@ -56,6 +58,10 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    if((tree = AVLTree_Init()) == NULL) {
+        return -1;
+    }
+
     if((diseaseHT = HashTable_Init(diseaseHTEntries, bucketSize)) == NULL) {
         return -1;
     }
@@ -63,12 +69,13 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if(DM_Init(fileName, list, diseaseHT, countryHT) == -1) {
+    if(DM_Init(fileName, list, tree, diseaseHT, countryHT) == -1) {
         printf("DM_Init failed\n");
         return -1;
     }
 
     List_Close(list);
+    AVLTree_Close(tree);
     HashTable_Close(diseaseHT);
     HashTable_Close(countryHT);
 

@@ -11,4 +11,6 @@ typedef Date* DatePtr;
 
 DatePtr Date_Init(char* info);
 
+int Date_Compare(const DatePtr d1, const DatePtr d2);
+
 #endif

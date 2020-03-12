@@ -3,7 +3,7 @@
 
 #include "../include/diseaseMonitor.h"
 
-int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2)
+int DM_Init(const char* fileName, ListPtr list, AVLTreePtr tree, HashTablePtr h1, HashTablePtr h2)
 {
     char *dest = NULL;
     FILE *filePtr = NULL;
@@ -25,6 +25,8 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
     {
         Patient_Print(patient);
         List_Insert(list, patient);
+
+        AVLTree_Insert(tree, patient->entryDate, patient);
     }
 
     free(dest);

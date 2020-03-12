@@ -19,3 +19,32 @@ DatePtr Date_Init(char* info)
 
     return date;
 }
+
+int Date_Compare(const DatePtr d1, const DatePtr d2)
+{
+    if(d1->year < d2->year) {
+        return -1;
+    }
+    else if(d1->year > d2->year) {
+        return 1;
+    }
+    else {
+        if(d1->month < d2->month) {
+            return -1;
+        }
+        else if(d1->month > d2->month) {
+            return 1;
+        }
+        else {
+            if(d1->day < d2->day) {
+                return -1;
+            }
+            else if(d1->day > d2->day) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
+}

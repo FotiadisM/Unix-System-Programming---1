@@ -56,3 +56,8 @@ unsigned long hash(char *str)
 
     return hash;
 }
+
+int HashTable_Insert(HashTablePtr ht, PatientPtr patient)
+{
+    return 0;
+}
