@@ -21,6 +21,6 @@ ListPtr List_Init();
 
 void List_Close(ListPtr l);
 
-int List_Insert(ListPtr list, PatientPtr patient);
+int List_Insert(ListPtr list, const PatientPtr patient);
 
 #endif

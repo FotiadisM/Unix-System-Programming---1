@@ -42,7 +42,7 @@ int max(int a, int b)
     return (a > b)? a : b;
 }
 
-int AVLNode_getHeight(AVLNodePtr node)
+int AVLNode_getHeight(const AVLNodePtr node)
 {
     if (node == NULL) {
         return 0;
@@ -51,7 +51,7 @@ int AVLNode_getHeight(AVLNodePtr node)
     return node->height;
 }
 
-int AVLNode_isBalanced(AVLNodePtr node)
+int AVLNode_isBalanced(const AVLNodePtr node)
 {
     if(node == NULL) {
         return 0;
@@ -88,7 +88,7 @@ AVLNodePtr AVLTree_RotateRight(AVLNodePtr node)
     return pr1;
 }
 
-int AVLTree_Insert(AVLTreePtr tree, DatePtr key, const PatientPtr value)
+int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const PatientPtr value)
 {
     if((tree->root = AVLNode_Insert(tree->root, key, value)) == NULL) {
         return -1;
@@ -99,7 +99,7 @@ int AVLTree_Insert(AVLTreePtr tree, DatePtr key, const PatientPtr value)
     return 0;
 }
 
-AVLNodePtr AVLNode_Insert(AVLNodePtr node, DatePtr key, const PatientPtr value)
+AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr value)
 {
     int isBalanced = 0;
 

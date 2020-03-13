@@ -31,7 +31,7 @@ void List_Close(ListPtr list)
     free(list);
 }
 
-int List_Insert(ListPtr list, PatientPtr patient)
+int List_Insert(ListPtr list, const PatientPtr patient)
 {
     ListNodePtr newNode = NULL;
 
@@ -42,7 +42,20 @@ int List_Insert(ListPtr list, PatientPtr patient)
 
     newNode->patient = patient;
     newNode->next = list->head;
-    list->head = newNode;
+
+    if(list->head == NULL || Date_Compare(patient->entryDate, list->head->patient->entryDate) == -1) {
+        list->head = newNode;
+    }
+    else {
+        ListNodePtr ptr = list->head;
+
+        while(ptr->next != NULL && Date_Compare(ptr->next->patient->entryDate, patient->entryDate) == -1) {
+            ptr = ptr->next;
+        }
+
+        newNode->next = ptr->next;
+        ptr->next = newNode;
+    }
 
     return 0;
 }

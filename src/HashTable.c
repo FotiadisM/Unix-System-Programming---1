@@ -2,7 +2,7 @@
 
 #include "../include/HashTable.h"
 
-HashTablePtr HashTable_Init(const int size, const int bucketSize)
+HashTablePtr HashTable_Init(const int size, const size_t bucketSize)
 {
     HashTablePtr ht = NULL;
 
@@ -45,7 +45,7 @@ void HashTable_Close(HashTablePtr ht)
     free(ht);
 }
 
-unsigned long hash(char *str)
+unsigned long hash(const char *str)
 {
     int c;
     unsigned long hash = 5381;
@@ -57,7 +57,9 @@ unsigned long hash(char *str)
     return hash;
 }
 
-int HashTable_Insert(HashTablePtr ht, PatientPtr patient)
+int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
 {
+    ht->table[hash(key) % ht->size].elements++;
+
     return 0;
 }

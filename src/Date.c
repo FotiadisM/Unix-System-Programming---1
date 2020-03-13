@@ -48,3 +48,8 @@ int Date_Compare(const DatePtr d1, const DatePtr d2)
         }
     }
 }
+
+void Date_Print(const DatePtr date)
+{
+    printf("%2d-%2d-%4d ", date->day, date->month, date->year);
+}

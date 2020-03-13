@@ -17,7 +17,7 @@ int DM_Init(const char* fileName, ListPtr list, AVLTreePtr tree, HashTablePtr h1
     strcat(dest, fileName);
 
     if((filePtr = fopen(dest, "r")) == NULL) {
-        perror(fileName);
+        perror(dest);
         return -1;
     }
 
@@ -25,8 +25,10 @@ int DM_Init(const char* fileName, ListPtr list, AVLTreePtr tree, HashTablePtr h1
     {
         Patient_Print(patient);
         List_Insert(list, patient);
-
         AVLTree_Insert(tree, patient->entryDate, patient);
+
+        // HashTable_Insert(h1, patient->diseaseID, patient);
+        // HashTable_Insert(h2, patient->country, patient);
     }
 
     free(dest);

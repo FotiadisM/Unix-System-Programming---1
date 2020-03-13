@@ -28,12 +28,12 @@ typedef struct HashTable {
 
 typedef HashTable* HashTablePtr;
 
-HashTablePtr HashTable_Init(const int size, const int bucketSize);
+HashTablePtr HashTable_Init(const int size, const size_t bucketSize);
 
 void HashTable_Close(HashTablePtr ht);
 
-unsigned long hash(char *str);
+unsigned long hash(const char *str);
 
-int HashTable_Insert(HashTablePtr ht, PatientPtr patient);
+int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient);
 
 #endif

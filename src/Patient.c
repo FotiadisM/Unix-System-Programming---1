@@ -79,11 +79,11 @@ void Patient_Close(PatientPtr patient)
     free(patient);
 }
 
-void Patient_Print(PatientPtr patient)
+void Patient_Print(const PatientPtr patient)
 {
     printf("%s %s %s %s %s %d-%d-%d ", patient->id, patient->fName, patient->lName, patient->diseaseID, patient->country, patient->entryDate->day, patient->entryDate->month, patient->entryDate->year);
     if(patient->exitDate != NULL) {
-        printf("exit: %d-%d-%d\n", patient->exitDate->day, patient->exitDate->month, patient->exitDate->year);
+        printf("%d-%d-%d\n", patient->exitDate->day, patient->exitDate->month, patient->exitDate->year);
     }
     else {
         printf("-\n");

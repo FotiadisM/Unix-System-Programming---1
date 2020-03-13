@@ -28,16 +28,16 @@ void AVLTree_Close(AVLTreePtr tree);
 
 int max(int a, int b);
 
-int AVLNode_getHeight(AVLNodePtr node);
+int AVLNode_getHeight(const AVLNodePtr node);
 
-int AVLNode_isBalanced(AVLNodePtr node);
+int AVLNode_isBalanced(const AVLNodePtr node);
 
 AVLNodePtr AVLTree_RotateLeft(AVLNodePtr node);
 
 AVLNodePtr AVLTree_RotateRight(AVLNodePtr node);
 
-int AVLTree_Insert(AVLTreePtr tree, DatePtr key, const PatientPtr value);
+int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const PatientPtr value);
 
-AVLNodePtr AVLNode_Insert(AVLNodePtr node, DatePtr key, const PatientPtr value);
+AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr value);
 
 #endif

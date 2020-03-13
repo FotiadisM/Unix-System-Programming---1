@@ -13,4 +13,6 @@ DatePtr Date_Init(char* info);
 
 int Date_Compare(const DatePtr d1, const DatePtr d2);
 
+void Date_Print(const DatePtr date);
+
 #endif
