@@ -4,11 +4,11 @@
 #include "Patient.h"
 
 typedef struct AVLNode {
+    int height;
     DatePtr key;
     PatientPtr value;
     struct AVLNode *left;
     struct AVLNode *right;
-    int height;
 } AVLNode;
 
 typedef AVLNode* AVLNodePtr;
@@ -26,7 +26,7 @@ void AVLNode_Close(AVLNodePtr node);
 
 void AVLTree_Close(AVLTreePtr tree);
 
-int max(int a, int b);
+int max(const int a, const int b);
 
 int AVLNode_getHeight(const AVLNodePtr node);
 

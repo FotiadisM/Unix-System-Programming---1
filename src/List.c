@@ -31,7 +31,7 @@ void List_Close(ListPtr list)
     free(list);
 }
 
-int List_Insert(ListPtr list, const PatientPtr patient)
+int List_InsertSorted(ListPtr list, const PatientPtr patient)
 {
     ListNodePtr newNode = NULL;
 

@@ -37,7 +37,7 @@ void AVLNode_Close(AVLNodePtr node)
     free(node);
 }
 
-int max(int a, int b)
+int max(const int a, const int b)
 {
     return (a > b)? a : b;
 }
@@ -135,7 +135,6 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
 
         default:
             return node;
-            break;
     }
 
     node->height = max(AVLNode_getHeight(node->left), AVLNode_getHeight(node->right)) + 1;

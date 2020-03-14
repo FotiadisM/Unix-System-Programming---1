@@ -1,7 +1,7 @@
 #ifndef PATIENT_H
 #define PATIENT_H
 
-#include "./Date.h"
+#include "Date.h"
 
 typedef struct Patient {
     char* id;
