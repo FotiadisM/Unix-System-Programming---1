@@ -42,6 +42,12 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
     return 1;
 }
 
+int DM_Run(ListPtr list, HashTablePtr h1, HashTablePtr h2)
+{
+
+    return 1;
+}
+
 PatientPtr DM_GetPatient(FILE *filePtr)
 {
     char *line = NULL;

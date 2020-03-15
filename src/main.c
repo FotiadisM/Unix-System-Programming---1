@@ -65,14 +65,13 @@ int main(int argc, char *argv[])
     }
 
     if(DM_Init(fileName, list, diseaseHT, countryHT) == -1) {
-        printf("DM_Init failed\n");
+        printf("DM_Init failed, program will now exit\n");
         return -1;
     }
 
-    List_Close(list);
     HashTable_Close(diseaseHT);
     HashTable_Close(countryHT);
-
+    List_Close(list, F_PATIENT);
 
     free(fileName);
 

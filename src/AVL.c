@@ -34,6 +34,7 @@ void AVLNode_Close(AVLNodePtr node)
     AVLNode_Close(node->left);
     AVLNode_Close(node->right);
 
+    List_Close(node->list, DF_PATIENT);
     free(node);
 }
 
@@ -111,8 +112,15 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
             return NULL;
         }
 
+        if((newNode->list = List_Init()) == NULL) {
+            return NULL;
+        }
+
         newNode->key = key;
-        newNode->value = value;
+        if(List_Insert(newNode->list, value) == -1) {
+            free(node);
+            return NULL;
+        }
         newNode->height = 1;
         newNode->left = NULL;
         newNode->right = NULL;
@@ -134,6 +142,9 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
             break;
 
         default:
+            if(List_Insert(node->list, value) == -1) {
+                return NULL;
+            }
             return node;
     }
 

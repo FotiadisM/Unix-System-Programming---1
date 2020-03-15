@@ -169,11 +169,8 @@ int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
         {
             return -1;
         }
-        AVLTree_Insert(tree, patient->entryDate, patient);
-    }
-    else {
-        return AVLTree_Insert(tree, patient->entryDate, patient);
+        ht->elements++;
     }
 
-    return 0;
+    return AVLTree_Insert(tree, patient->entryDate, patient);
 }

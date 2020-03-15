@@ -1,12 +1,14 @@
 #ifndef AVL_H
 #define AVL_H
 
+#include "List.h"
 #include "Patient.h"
 
 typedef struct AVLNode {
     int height;
     DatePtr key;
-    PatientPtr value;
+    // PatientPtr value;
+    ListPtr list;
     struct AVLNode *left;
     struct AVLNode *right;
 } AVLNode;
