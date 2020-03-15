@@ -110,8 +110,7 @@ AVLTreePtr HashTable_LocateKey(HashNodePtr node, const char *key)
         tmpHashEntry = tmpHashNode->entry;
         while (tmpHashEntry != NULL)
         {
-            if (!strcmp(tmpHashEntry->key, key))
-            {
+            if (!strcmp(tmpHashEntry->key, key)) {
                 return tmpHashEntry->tree;
             }
             tmpHashEntry = tmpHashEntry->next;
@@ -128,41 +127,33 @@ AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int entriesP
     HashNodePtr tmpHashNode = node;
     HashEntryPtr tmpHashEntry = NULL;
 
-    while (node != NULL)
-    {
-        printf("%s\n", key);
-        tmpHashEntry = node->entry;
-        while (node->entry != NULL)
-        {
-            if (++count == entriesPerBucket)
-            {
-                break;
-            }
-            node->entry = node->entry->next;
-        }
-        if (count < entriesPerBucket)
-        {
-            if ((node->entry = HashEntry_Init(key)) == NULL)
-                return NULL;
-            printf("we back\n");
-            node->entry = tmpHashEntry;
-            return tmpHashEntry->tree;
-        }
-        count = 0;
+    while (tmpHashNode->next != NULL) {
         tmpHashNode = tmpHashNode->next;
     }
 
-    if ((tmpHashNode = malloc(sizeof(HashNode))) == NULL)
-    {
-        perror("malloc failed");
+    tmpHashEntry = tmpHashNode->entry;
+    while (tmpHashEntry != NULL) {
+        if (++count < entriesPerBucket) {
+            break;
+        }
+        tmpHashEntry = tmpHashEntry->next;
+    }
+
+    if (count == entriesPerBucket) {
+        if ((tmpHashNode->next = malloc(sizeof(HashNode))) == NULL) {
+            return NULL;
+        }
+        tmpHashNode = tmpHashNode->next;
+        tmpHashNode->next = NULL;
+        tmpHashNode->entry = NULL;
+    }
+
+    tmpHashEntry = tmpHashNode->entry;
+    if ((tmpHashNode->entry = HashEntry_Init(key)) == NULL) {
         return NULL;
     }
 
-    if ((tmpHashNode->entry = HashEntry_Init(key)) == NULL)
-    {
-        return NULL;
-    }
-    tmpHashNode->next = NULL;
+    tmpHashNode->entry->next = tmpHashEntry;
 
     return tmpHashNode->entry->tree;
 }
@@ -180,8 +171,9 @@ int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
         }
         AVLTree_Insert(tree, patient->entryDate, patient);
     }
-    else
+    else {
         return AVLTree_Insert(tree, patient->entryDate, patient);
+    }
 
     return 0;
 }

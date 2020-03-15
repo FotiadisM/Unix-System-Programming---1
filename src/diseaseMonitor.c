@@ -24,11 +24,14 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
 
     while((patient = DM_GetPatient(filePtr)) != NULL)
     {
-        // Patient_Print(patient);
+        Patient_Print(patient);
         if(List_InsertSorted(list, patient) == -1) {
             return -1;
         }
         if(HashTable_Insert(h1, patient->diseaseID, patient) == -1) {
+            return -1;
+        }
+        if(HashTable_Insert(h2, patient->country, patient) == -1) {
             return -1;
         }
     }
