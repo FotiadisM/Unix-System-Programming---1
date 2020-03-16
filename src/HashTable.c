@@ -16,7 +16,7 @@ unsigned long hash(const char *str)
     return hash;
 }
 
-HashEntryPtr HashEntry_Init(const char* str)
+HashEntryPtr HashEntry_Init(const char* key)
 {
     HashEntryPtr entry = NULL;
 
@@ -25,12 +25,13 @@ HashEntryPtr HashEntry_Init(const char* str)
         return NULL;
     }
 
-    if((entry->key = malloc(strlen(str) + 1)) == NULL) {
+    if((entry->key = malloc(strlen(key) + 1)) == NULL) {
         perror("malloc failed");
         free(entry);
         return NULL;
     }
-    strcpy(entry->key, str);
+    strcpy(entry->key, key);
+    // entry->key = key;
 
     if((entry->tree = AVLTree_Init(entry->tree)) == NULL) {
         free(entry->key);
@@ -133,7 +134,7 @@ AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int entriesP
 
     tmpHashEntry = tmpHashNode->entry;
     while (tmpHashEntry != NULL) {
-        if (++count < entriesPerBucket) {
+        if (++count == entriesPerBucket) {
             break;
         }
         tmpHashEntry = tmpHashEntry->next;
@@ -165,7 +166,7 @@ int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
 
     if ((tree = HashTable_LocateKey(&(ht->table[index]), key)) == NULL)
     {
-        if ((tree = HashNode_Insert(&(ht->table[index]), key, 2)) == NULL)
+        if ((tree = HashNode_Insert(&(ht->table[index]), key, ht->bucketSize / (sizeof(HashEntryPtr) + sizeof(HashNodePtr)))) == NULL)
         {
             return -1;
         }

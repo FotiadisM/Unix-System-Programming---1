@@ -19,6 +19,7 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
 
     if((filePtr = fopen(dest, "r")) == NULL) {
         perror(dest);
+        free(dest);
         return -1;
     }
 
@@ -35,17 +36,18 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
             return -1;
         }
     }
+    printf("\n");
 
     free(dest);
     fclose(filePtr);
 
-    return 1;
+    return 0;
 }
 
-int DM_Run(ListPtr list, HashTablePtr h1, HashTablePtr h2)
+int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
 {
-
-    return 1;
+    globalDiseaseStats(h1, NULL, NULL);
+    return 0;
 }
 
 PatientPtr DM_GetPatient(FILE *filePtr)
@@ -67,4 +69,22 @@ PatientPtr DM_GetPatient(FILE *filePtr)
     free(line);
 
     return patient;
+}
+
+void globalDiseaseStats(HashTablePtr ht, DatePtr d1, DatePtr d2)
+{
+    HashEntryPtr entryPtr = NULL;
+    HashNodePtr nodePtr = NULL;
+
+    for(int i=0; i < ht->size; i++) {
+        nodePtr = &(ht->table[i]);
+        while(nodePtr != NULL) {
+            entryPtr = nodePtr->entry;
+            while(entryPtr != NULL) {
+                printf("disease: %s, patients: %d\n", entryPtr->key, entryPtr->tree->elements);
+                entryPtr = entryPtr->next;
+            }
+            nodePtr = nodePtr->next;
+        }
+    }
 }
