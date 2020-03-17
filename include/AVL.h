@@ -42,4 +42,6 @@ int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const PatientPtr value);
 
 AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr value);
 
+int AVLNode_countPatients(const AVLNodePtr node, const char* country, const DatePtr d1, const DatePtr d2);
+
 #endif

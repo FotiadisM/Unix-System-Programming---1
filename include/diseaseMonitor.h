@@ -12,6 +12,10 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2);
 
 PatientPtr DM_GetPatient(FILE *filePtr);
 
-void globalDiseaseStats(HashTablePtr ht, DatePtr d1, DatePtr d2);
+void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d2);
+
+void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* country, const DatePtr d1, const DatePtr d2);
+
+// int insertPatientRecprd(char* reccordID, char* disease, char* country, )
 
 #endif

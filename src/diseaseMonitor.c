@@ -46,7 +46,28 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
 
 int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
 {
-    globalDiseaseStats(h1, NULL, NULL);
+    // char* str;
+    // DatePtr d1, d2;
+
+    // str = malloc(sizeof(100));
+    // strcpy(str, "0-0-0000");
+
+    // d1 = Date_Init(str);
+
+    // strcpy(str, "0-0-3000");
+    // d2 = Date_Init(str);
+
+    // globalDiseaseStats(h1, NULL, NULL);
+    // globalDiseaseStats(h1, d1, d2);
+
+    // strcpy(str, "China");
+
+    // diseaseFrequency(h1, "COVID-2019", str, d1, d2);
+
+    // free(str);
+    // free(d1);
+    // free(d2);
+
     return 0;
 }
 
@@ -71,7 +92,7 @@ PatientPtr DM_GetPatient(FILE *filePtr)
     return patient;
 }
 
-void globalDiseaseStats(HashTablePtr ht, DatePtr d1, DatePtr d2)
+void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d2)
 {
     HashEntryPtr entryPtr = NULL;
     HashNodePtr nodePtr = NULL;
@@ -81,10 +102,36 @@ void globalDiseaseStats(HashTablePtr ht, DatePtr d1, DatePtr d2)
         while(nodePtr != NULL) {
             entryPtr = nodePtr->entry;
             while(entryPtr != NULL) {
-                printf("disease: %s, patients: %d\n", entryPtr->key, entryPtr->tree->elements);
+                if(d2 == NULL) {
+                    printf("disease: %s, patients: %d\n", entryPtr->key, entryPtr->tree->elements);
+                }
+                else {
+                    printf("disease: %s, patients: %d\n", entryPtr->key, AVLNode_countPatients(entryPtr->tree->root, NULL, d1, d2));
+                }
                 entryPtr = entryPtr->next;
             }
             nodePtr = nodePtr->next;
         }
     }
+    printf("\n");
+}
+
+void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* country, const DatePtr d1, const DatePtr d2)
+{
+    HashEntryPtr entryPtr = NULL;
+    HashNodePtr nodePtr = &(ht->table[hash(disease) % ht->size]);
+
+    while(nodePtr != NULL) {
+        entryPtr = nodePtr->entry;
+        while(entryPtr != NULL) {
+            if (!strcmp(entryPtr->key, disease)) {
+                printf("patients: %d\n", AVLNode_countPatients(entryPtr->tree->root, country, d1, d2));
+                break;
+            }
+            entryPtr = entryPtr->next;
+        }
+        nodePtr = nodePtr->next;
+    }
+    printf("\n");
+
 }

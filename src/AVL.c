@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/AVL.h"
 
@@ -174,4 +175,34 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
     }
 
     return node;
+}
+
+int AVLNode_countPatients(const AVLNodePtr node, const char* country, const DatePtr d1, const DatePtr d2)
+{
+    if(node == NULL) {
+        return 0;
+    }
+
+    if(Date_Compare(node->key, d2) == 1) {
+        return AVLNode_countPatients(node->left, country, d1, d2);
+    }
+    else if(Date_Compare(node->key, d1) == -1) {
+        return AVLNode_countPatients(node->right, country, d1, d2);
+    }
+    else {
+        int count = node->list->len;
+        ListNodePtr list = node->list->head;
+
+        if(country != NULL) {
+            count = 0;
+            while(list != NULL) {
+                if (!strcmp(list->patient->country, country)) {
+                    count++;
+                }
+                list = list->next;
+            }
+        }
+
+        return (AVLNode_countPatients(node->left, country, d1, d2) + AVLNode_countPatients(node->right, country, d1, d2) + count);
+    }
 }
