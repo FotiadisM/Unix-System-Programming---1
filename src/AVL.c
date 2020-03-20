@@ -206,3 +206,24 @@ int AVLNode_countPatients(const AVLNodePtr node, const char* country, const Date
         return (AVLNode_countPatients(node->left, country, d1, d2) + AVLNode_countPatients(node->right, country, d1, d2) + count);
     }
 }
+
+int AVLNode_countNullPatients(AVLNodePtr node)
+{
+    int count = 0;
+    ListNodePtr ptr = NULL;
+
+    if(node == NULL) {
+        return 0;
+    }
+
+    ptr = node->list->head;
+    while (ptr != NULL)
+    {
+        if(ptr->patient->exitDate == NULL) {
+            count ++;
+        }
+        ptr = ptr->next;
+    }
+
+    return (AVLNode_countNullPatients(node->left) + AVLNode_countNullPatients(node->right) + count);
+}

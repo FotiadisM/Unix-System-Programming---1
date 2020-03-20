@@ -44,4 +44,6 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
 
 int AVLNode_countPatients(const AVLNodePtr node, const char* country, const DatePtr d1, const DatePtr d2);
 
+int AVLNode_countNullPatients(AVLNodePtr node);
+
 #endif

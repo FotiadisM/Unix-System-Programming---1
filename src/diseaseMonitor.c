@@ -46,27 +46,12 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
 
 int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
 {
-    // char* str;
-    // DatePtr d1, d2;
+    // char str[10];
+    // strcpy(str, "19-3-2020");
 
-    // str = malloc(sizeof(100));
-    // strcpy(str, "0-0-0000");
-
-    // d1 = Date_Init(str);
-
-    // strcpy(str, "0-0-3000");
-    // d2 = Date_Init(str);
-
-    // globalDiseaseStats(h1, NULL, NULL);
-    // globalDiseaseStats(h1, d1, d2);
-
-    // strcpy(str, "China");
-
-    // diseaseFrequency(h1, "COVID-2019", str, d1, d2);
-
-    // free(str);
-    // free(d1);
-    // free(d2);
+    // numCurrentPatients(h1, "COVID-2019");
+    // printf("%d\n", insertPatientRecord(list, h1, h2, "32", "Stefanos", "Fotiadis", "COVID-2019", "Greece", str, NULL));
+    // numCurrentPatients(h1, "COVID-2019");
 
     return 0;
 }
@@ -134,4 +119,123 @@ void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* co
     }
     printf("\n");
 
+}
+
+int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* reccordID, char* fName, char* lName, char* disease, char* country, char* d1, char* d2)
+{
+    PatientPtr patient = NULL;
+
+    if((patient = malloc(sizeof(Patient))) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+
+    if((patient->id = malloc(strlen(reccordID) + 1)) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+    strcpy(patient->id, reccordID);
+
+    if((patient->fName = malloc(strlen(fName) + 1)) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+    strcpy(patient->fName, fName);
+
+    if((patient->lName = malloc(strlen(lName) + 1)) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+    strcpy(patient->lName, lName);
+
+    if((patient->diseaseID = malloc(strlen(disease) + 1)) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+    strcpy(patient->diseaseID, disease);
+
+    if((patient->country = malloc(strlen(country) + 1)) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+    strcpy(patient->country, country);
+
+    if((patient->entryDate = Date_Init(d1)) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+
+    if(d2 == NULL) {
+        patient->exitDate = NULL;
+    }
+    else {
+        if((patient->exitDate = Date_Init(d2)) == NULL) {
+            perror("malloc failed");
+            return -1;
+        }
+    }
+
+    if(List_InsertSorted(list, patient) == -1) {
+        return -1;
+    }
+    if(HashTable_Insert(h1, patient->diseaseID, patient) == -1) {
+        return -1;
+    }
+    if(HashTable_Insert(h2, patient->country, patient) == -1) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int recordPatientExit(ListPtr list, char* id, char* d2)
+{
+    ListNodePtr ptr = list->head;
+
+    while(ptr != NULL) {
+        if (!strcmp(ptr->patient->id, id)) {
+            if((ptr->patient->exitDate = Date_Init(d2)) == NULL) {
+                perror("malloc failed");
+                return -1;
+            }
+            break;
+        }
+    }
+
+    return 0;
+}
+
+void numCurrentPatients(HashTablePtr ht, char* disease)
+{
+    HashEntryPtr entryPtr = NULL;
+    HashNodePtr nodePtr = NULL;
+
+    if(disease == NULL) {
+        for(int i=0; i < ht->size; i++) {
+            nodePtr = &(ht->table[i]);
+            while(nodePtr != NULL) {
+                entryPtr = nodePtr->entry;
+                while(entryPtr != NULL) {
+                    printf("Disease: %s, patients: %d\n", entryPtr->key, AVLNode_countNullPatients(entryPtr->tree->root));
+                    entryPtr = entryPtr->next;
+                }
+                nodePtr = nodePtr->next;
+            }
+        }
+    }
+    else {
+        nodePtr = &(ht->table[hash(disease) % ht->size]);
+        while(nodePtr != NULL) {
+            entryPtr = nodePtr->entry;
+            while(entryPtr != NULL) {
+                if (!strcmp(entryPtr->key, disease)) {
+                    printf("Disease: %s, patients: %d\n", disease, AVLNode_countNullPatients(entryPtr->tree->root));
+                    break;
+                }
+                entryPtr = entryPtr->next;
+            }
+            nodePtr = nodePtr->next;
+        }
+    }
+    printf("\n");
 }
