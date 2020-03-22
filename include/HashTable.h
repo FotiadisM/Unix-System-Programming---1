@@ -9,13 +9,13 @@
 typedef struct HashEntry {
     char *key;
     AVLTreePtr tree;
-    struct HashEntry *next;
+    // struct HashEntry *next;
 } HashEntry;
 
 typedef HashEntry* HashEntryPtr;
 
 typedef struct HashNode {
-    HashEntryPtr entry;
+    HashEntryPtr *entries;
     struct HashNode *next;
 } HashNode;
 
@@ -38,9 +38,9 @@ HashTablePtr HashTable_Init(const int size, const size_t bucketSize);
 
 void HashTable_Close(HashTablePtr ht);
 
-void HashNode_Close(HashNodePtr node);
+void HashNode_Close(HashNodePtr node, const int bucketSize);
 
-AVLTreePtr HashTable_LocateKey(HashNodePtr ht, const char *key);
+AVLTreePtr HashTable_LocateKey(HashNodePtr ht, const char *key, const int bucketSize);
 
 AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int entriesPerBucket);
 

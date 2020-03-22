@@ -39,8 +39,6 @@ HashEntryPtr HashEntry_Init(const char* key)
         return NULL;
     }
 
-    entry->next = NULL;
-
     return entry;
 }
 
@@ -48,22 +46,30 @@ HashTablePtr HashTable_Init(const int size, const size_t bucketSize)
 {
     HashTablePtr ht = NULL;
 
-    if((ht = malloc(sizeof(HashTable))) == NULL) {
+    if ((ht = malloc(sizeof(HashTable))) == NULL) {
         perror("malloc failed");
         return NULL;
     }
 
     ht->size = size;
     ht->elements = 0;
-    ht->bucketSize = bucketSize;
+    ht->bucketSize = (bucketSize - sizeof(HashNodePtr) / sizeof(HashEntryPtr));
 
-    if((ht->table = malloc(size*sizeof(HashNode))) == NULL) {
+    if ((ht->table = malloc(size*sizeof(HashNode))) == NULL) {
         perror("malloc failed");
         return NULL;
     }
 
-    for(int i=0; i < size; i++) {
-        ht->table[i].entry = NULL;
+    for (int i=0; i < size; i++) {
+        if ((ht->table[i].entries = malloc(ht->bucketSize * sizeof(HashEntryPtr))) == NULL) {
+            perror("malloc failed");
+            return NULL;
+        }
+
+        for (int j=0; j < ht->bucketSize; j++) {
+            ht->table[i].entries[j] = NULL;
+        }
+
         ht->table[i].next = NULL;
     }
 
@@ -74,47 +80,52 @@ void HashTable_Close(HashTablePtr ht)
 {
     HashNodePtr tmpHashNode = NULL;
 
-    for(int i=0; i < ht->size; i++) {
-        while(ht->table[i].next != NULL) {
+    for (int i=0; i < ht->size; i++)
+    {
+        while (ht->table[i].next != NULL)
+        {
             tmpHashNode = ht->table[i].next;
             ht->table[i].next = tmpHashNode->next;
-            HashNode_Close(tmpHashNode);
+            HashNode_Close(tmpHashNode, ht->bucketSize);
             free(tmpHashNode);
         }
-        HashNode_Close(&(ht->table[i]));
+        HashNode_Close(&(ht->table[i]), ht->bucketSize);
     }
 
     free(ht->table);
     free(ht);
 }
 
-void HashNode_Close(HashNodePtr node)
+void HashNode_Close(HashNodePtr node, const int bucketSize)
 {
-    HashEntryPtr tmpHashEntry = NULL;
-
-    while(node->entry != NULL) {
-        tmpHashEntry = node->entry;
-        node->entry = node->entry->next;
-        free(tmpHashEntry->key);
-        AVLTree_Close(tmpHashEntry->tree);
-        free(tmpHashEntry);
+    for (int i=0; i < bucketSize; i++)
+    {
+        if (node->entries[i] != NULL)
+        {
+            free(node->entries[i]->key);
+            AVLTree_Close(node->entries[i]->tree);
+            free(node->entries[i]);
+        }
     }
+
+    free(node->entries);
 }
 
-AVLTreePtr HashTable_LocateKey(HashNodePtr node, const char *key)
+AVLTreePtr HashTable_LocateKey(HashNodePtr node, const char *key, const int bucketSize)
 {
     HashNodePtr tmpHashNode = node;
-    HashEntryPtr tmpHashEntry = NULL;
 
     while (tmpHashNode != NULL)
     {
-        tmpHashEntry = tmpHashNode->entry;
-        while (tmpHashEntry != NULL)
+        for (int i=0; i < bucketSize; i++)
         {
-            if (!strcmp(tmpHashEntry->key, key)) {
-                return tmpHashEntry->tree;
+            if (tmpHashNode->entries[i] != NULL)
+            {
+                if (!strcmp(tmpHashNode->entries[i]->key, key))
+                {
+                    return tmpHashNode->entries[i]->tree;
+                }
             }
-            tmpHashEntry = tmpHashEntry->next;
         }
         tmpHashNode = tmpHashNode->next;
     }
@@ -122,41 +133,42 @@ AVLTreePtr HashTable_LocateKey(HashNodePtr node, const char *key)
     return NULL;
 }
 
-AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int entriesPerBucket)
+AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int bucketSize)
 {
-    int count = 0;
     HashNodePtr tmpHashNode = node;
-    HashEntryPtr tmpHashEntry = NULL;
 
     while (tmpHashNode->next != NULL) {
         tmpHashNode = tmpHashNode->next;
     }
 
-    tmpHashEntry = tmpHashNode->entry;
-    while (tmpHashEntry != NULL) {
-        if (++count == entriesPerBucket) {
-            break;
+    for (int i=0; i < bucketSize; i++) {
+        if (tmpHashNode->entries[i] == NULL) {
+            if ((tmpHashNode->entries[i] = HashEntry_Init(key)) == NULL) {
+                return NULL;
+            }
+
+            return tmpHashNode->entries[i]->tree;
         }
-        tmpHashEntry = tmpHashEntry->next;
     }
 
-    if (count == entriesPerBucket) {
-        if ((tmpHashNode->next = malloc(sizeof(HashNode))) == NULL) {
-            return NULL;
-        }
-        tmpHashNode = tmpHashNode->next;
-        tmpHashNode->next = NULL;
-        tmpHashNode->entry = NULL;
-    }
-
-    tmpHashEntry = tmpHashNode->entry;
-    if ((tmpHashNode->entry = HashEntry_Init(key)) == NULL) {
+    if ((tmpHashNode->next = malloc(sizeof(HashNode))) == NULL) {
+        perror("mallon failed");
         return NULL;
     }
 
-    tmpHashNode->entry->next = tmpHashEntry;
+    tmpHashNode = tmpHashNode->next;
+    tmpHashNode->next = NULL;
 
-    return tmpHashNode->entry->tree;
+    if ((tmpHashNode->entries = malloc(bucketSize * sizeof(HashEntryPtr))) == NULL) {
+        perror("mallon failed");
+        return NULL;
+    }
+
+    if ((tmpHashNode->entries[0] = HashEntry_Init(key)) == NULL) {
+        return NULL;
+    }
+
+    return tmpHashNode->entries[0]->tree;
 }
 
 int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
@@ -164,9 +176,9 @@ int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
     int index = hash(key) % ht->size;
     AVLTreePtr tree = NULL;
 
-    if ((tree = HashTable_LocateKey(&(ht->table[index]), key)) == NULL)
+    if ((tree = HashTable_LocateKey(&(ht->table[index]), key, ht->bucketSize)) == NULL)
     {
-        if ((tree = HashNode_Insert(&(ht->table[index]), key, ht->bucketSize / (sizeof(HashEntryPtr) + sizeof(HashNodePtr)))) == NULL)
+        if ((tree = HashNode_Insert(&(ht->table[index]), key, ht->bucketSize)) == NULL)
         {
             return -1;
         }
