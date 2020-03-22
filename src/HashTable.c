@@ -53,7 +53,7 @@ HashTablePtr HashTable_Init(const int size, const size_t bucketSize)
 
     ht->size = size;
     ht->elements = 0;
-    ht->bucketSize = (bucketSize - sizeof(HashNodePtr) / sizeof(HashEntryPtr));
+    ht->bucketSize = (bucketSize - sizeof(HashNodePtr)) / sizeof(HashEntryPtr);
 
     if ((ht->table = malloc(size*sizeof(HashNode))) == NULL) {
         perror("malloc failed");
@@ -162,6 +162,10 @@ AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int bucketSi
     if ((tmpHashNode->entries = malloc(bucketSize * sizeof(HashEntryPtr))) == NULL) {
         perror("mallon failed");
         return NULL;
+    }
+
+    for(int i=0; i < bucketSize; i++) {
+        tmpHashNode->entries[i] = NULL;
     }
 
     if ((tmpHashNode->entries[0] = HashEntry_Init(key)) == NULL) {
