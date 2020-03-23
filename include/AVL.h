@@ -7,7 +7,6 @@
 typedef struct AVLNode {
     int height;
     DatePtr key;
-    // PatientPtr value;
     ListPtr list;
     struct AVLNode *left;
     struct AVLNode *right;

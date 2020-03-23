@@ -9,10 +9,10 @@ SDIR = src
 
 EXECUTABLE = diseaseMonitor
 
-_DEPS = diseaseMonitor.h Date.h Patient.h HashTable.h List.h AVL.h defines.h
+_DEPS = diseaseMonitor.h Date.h Patient.h HashTable.h List.h AVL.h fnclib.h defines.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o diseaseMonitor.o Date.o Patient.o HashTable.o List.o AVL.o
+_OBJ = main.o diseaseMonitor.o Date.o Patient.o HashTable.o List.o AVL.o fnclib.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)

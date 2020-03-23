@@ -9,7 +9,6 @@
 typedef struct HashEntry {
     char *key;
     AVLTreePtr tree;
-    // struct HashEntry *next;
 } HashEntry;
 
 typedef HashEntry* HashEntryPtr;
