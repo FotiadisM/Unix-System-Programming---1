@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     }
 
     HashTable_Close(diseaseHT);
-    // HashTable_Close(countryHT);
+    HashTable_Close(countryHT);
     List_Close(list, F_PATIENT);
 
     free(line);

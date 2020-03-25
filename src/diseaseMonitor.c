@@ -54,7 +54,7 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
     char s1[11], s2[11];
     DatePtr d1, d2;
 
-    strcpy(s1, "0-0-1995");
+    strcpy(s1, "0-0-995");
     strcpy(s2, "0-0-3000");
 
     d1 = Date_Init(s1);
@@ -62,11 +62,6 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
 
     // strcpy(s1, "00-00-2005");
     // strcpy(s2, "00-00-3000");
-
-    Date_Print(d1);
-    printf("\n");
-    Date_Print(d2);
-    printf("\n");
 
     globalDiseaseStats(h1, d1, d2);
     globalDiseaseStats(h1, NULL, NULL);

@@ -55,22 +55,30 @@ ListNodePtr List_InsertSorted(ListPtr list, const PatientPtr patient)
 {
     ListNodePtr newNode = NULL;
 
-    if((newNode = malloc(sizeof(ListNode))) == NULL) {
+    if ((newNode = malloc(sizeof(ListNode))) == NULL) {
         perror("malloc failed");
         return NULL;
     }
 
     newNode->patient = patient;
 
-    if(list->head == NULL || Date_Compare(patient->entryDate, list->head->patient->entryDate) == -1) {
+    if (list->head == NULL || Date_Compare(patient->entryDate, list->head->patient->entryDate) == -1) {
         newNode->next = list->head;
         list->head = newNode;
     }
     else {
         ListNodePtr ptr = list->head;
 
-        while(ptr->next != NULL) {
-            if (Date_Compare(ptr->next->patient->entryDate, patient->entryDate) == -1) {
+        while(ptr->next != NULL)
+        {
+            if (Date_Compare(ptr->next->patient->entryDate, patient->entryDate) != -1) {
+                if (Date_Compare(ptr->next->patient->entryDate, patient->entryDate) == 0) {
+                    newNode->next = ptr->next->next;
+                    ptr->next->next = newNode;
+
+                    return newNode;
+                }
+
                 break;
             }
             ptr = ptr->next;
