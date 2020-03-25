@@ -175,7 +175,7 @@ AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int bucketSi
     return tmpHashNode->entries[0]->tree;
 }
 
-int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
+int HashTable_Insert(HashTablePtr ht, const char* key, const ListNodePtr listNode)
 {
     int index = hash(key) % ht->size;
     AVLTreePtr tree = NULL;
@@ -189,5 +189,5 @@ int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient)
         ht->elements++;
     }
 
-    return AVLTree_Insert(tree, patient->entryDate, patient);
+    return AVLTree_Insert(tree, listNode->patient->entryDate, listNode);
 }

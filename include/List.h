@@ -26,7 +26,7 @@ void List_Close(ListPtr l, int bool);
 
 int List_Insert(ListPtr list, const PatientPtr patient);
 
-int List_InsertSorted(ListPtr list, const PatientPtr patient);
+ListNodePtr List_InsertSorted(ListPtr list, const PatientPtr patient);
 
 void List_Print(ListPtr list);
 

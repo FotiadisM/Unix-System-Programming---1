@@ -35,7 +35,6 @@ void AVLNode_Close(AVLNodePtr node)
     AVLNode_Close(node->left);
     AVLNode_Close(node->right);
 
-    List_Close(node->list, DF_PATIENT);
     free(node);
 }
 
@@ -90,9 +89,9 @@ AVLNodePtr AVLTree_RotateRight(AVLNodePtr node)
     return pr1;
 }
 
-int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const PatientPtr value)
+int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const ListNodePtr listNode)
 {
-    if((tree->root = AVLNode_Insert(tree->root, key, value)) == NULL) {
+    if((tree->root = AVLNode_Insert(tree->root, key, listNode)) == NULL) {
         return -1;
     }
 
@@ -101,7 +100,7 @@ int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const PatientPtr value)
     return 0;
 }
 
-AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr value)
+AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const ListNodePtr listNode)
 {
     int isBalanced = 0;
 
@@ -113,16 +112,9 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
             return NULL;
         }
 
-        if((newNode->list = List_Init()) == NULL) {
-            return NULL;
-        }
-
-        newNode->key = key;
-        if(List_Insert(newNode->list, value) == -1) {
-            free(node);
-            return NULL;
-        }
         newNode->height = 1;
+        newNode->key = key;
+        newNode->value = listNode;
         newNode->left = NULL;
         newNode->right = NULL;
 
@@ -131,21 +123,18 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
 
     switch (Date_Compare(key, node->key)) {
         case -1:
-            if((node->left = AVLNode_Insert(node->left, key, value))== NULL) {
+            if((node->left = AVLNode_Insert(node->left, key, listNode))== NULL) {
                 return NULL;
             }
             break;
 
         case 1:
-            if((node->right = AVLNode_Insert(node->right, key, value)) == NULL) {
+            if((node->right = AVLNode_Insert(node->right, key, listNode)) == NULL) {
                 return NULL;
             }
             break;
 
         default:
-            if(List_Insert(node->list, value) == -1) {
-                return NULL;
-            }
             return node;
     }
 
@@ -179,27 +168,40 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr v
 
 int AVLNode_countPatients(const AVLNodePtr node, const char* country, const DatePtr d1, const DatePtr d2)
 {
-    if(node == NULL) {
+    if (node == NULL) {
         return 0;
     }
 
-    if(Date_Compare(node->key, d2) == 1) {
+    if (Date_Compare(node->key, d2) == 1) {
         return AVLNode_countPatients(node->left, country, d1, d2);
     }
-    else if(Date_Compare(node->key, d1) == -1) {
+    else if (Date_Compare(node->key, d1) == -1) {
         return AVLNode_countPatients(node->right, country, d1, d2);
     }
     else {
-        int count = node->list->len;
-        ListNodePtr list = node->list->head;
+        int count = 0;
+        ListNodePtr listNode = node->value;
 
-        if(country != NULL) {
-            count = 0;
-            while(list != NULL) {
-                if (!strcmp(list->patient->country, country)) {
+        if (country == NULL) {
+            while (listNode != NULL)
+            {
+                if (Date_Compare(listNode->patient->entryDate, node->key)) {
+                    break;
+                }
+                count++;
+                listNode = listNode->next;
+            }
+        }
+        else {
+            while (listNode != NULL)
+            {
+                if (Date_Compare(listNode->patient->entryDate, node->key)) {
+                    break;
+                }
+                if (!strcmp(listNode->patient->country, country)) {
                     count++;
                 }
-                list = list->next;
+                listNode = listNode->next;
             }
         }
 
@@ -207,23 +209,23 @@ int AVLNode_countPatients(const AVLNodePtr node, const char* country, const Date
     }
 }
 
-int AVLNode_countNullPatients(AVLNodePtr node)
-{
-    int count = 0;
-    ListNodePtr ptr = NULL;
+// int AVLNode_countNullPatients(AVLNodePtr node)
+// {
+//     int count = 0;
+//     ListNodePtr ptr = NULL;
 
-    if(node == NULL) {
-        return 0;
-    }
+//     if(node == NULL) {
+//         return 0;
+//     }
 
-    ptr = node->list->head;
-    while (ptr != NULL)
-    {
-        if(ptr->patient->exitDate == NULL) {
-            count ++;
-        }
-        ptr = ptr->next;
-    }
+//     ptr = node->list->head;
+//     while (ptr != NULL)
+//     {
+//         if(ptr->patient->exitDate == NULL) {
+//             count ++;
+//         }
+//         ptr = ptr->next;
+//     }
 
-    return (AVLNode_countNullPatients(node->left) + AVLNode_countNullPatients(node->right) + count);
-}
+//     return (AVLNode_countNullPatients(node->left) + AVLNode_countNullPatients(node->right) + count);
+// }

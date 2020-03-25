@@ -7,7 +7,7 @@
 typedef struct AVLNode {
     int height;
     DatePtr key;
-    ListPtr list;
+    ListNodePtr value;
     struct AVLNode *left;
     struct AVLNode *right;
 } AVLNode;
@@ -37,9 +37,9 @@ AVLNodePtr AVLTree_RotateLeft(AVLNodePtr node);
 
 AVLNodePtr AVLTree_RotateRight(AVLNodePtr node);
 
-int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const PatientPtr value);
+int AVLTree_Insert(AVLTreePtr tree, const DatePtr key, const ListNodePtr listNode);
 
-AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const PatientPtr value);
+AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const ListNodePtr listNode);
 
 int AVLNode_countPatients(const AVLNodePtr node, const char* country, const DatePtr d1, const DatePtr d2);
 

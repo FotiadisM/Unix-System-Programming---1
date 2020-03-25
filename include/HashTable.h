@@ -43,6 +43,6 @@ AVLTreePtr HashTable_LocateKey(HashNodePtr ht, const char *key, const int bucket
 
 AVLTreePtr HashNode_Insert(HashNodePtr node, const char *key, const int entriesPerBucket);
 
-int HashTable_Insert(HashTablePtr ht, const char* key, const PatientPtr patient);
+int HashTable_Insert(HashTablePtr ht, const char* key, const ListNodePtr listNode);
 
 #endif

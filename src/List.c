@@ -51,13 +51,13 @@ int List_Insert(ListPtr list, const PatientPtr patient)
     return 0;
 }
 
-int List_InsertSorted(ListPtr list, const PatientPtr patient)
+ListNodePtr List_InsertSorted(ListPtr list, const PatientPtr patient)
 {
     ListNodePtr newNode = NULL;
 
     if((newNode = malloc(sizeof(ListNode))) == NULL) {
         perror("malloc failed");
-        return -1;
+        return NULL;
     }
 
     newNode->patient = patient;
@@ -69,7 +69,10 @@ int List_InsertSorted(ListPtr list, const PatientPtr patient)
     else {
         ListNodePtr ptr = list->head;
 
-        while(ptr->next != NULL && Date_Compare(ptr->next->patient->entryDate, patient->entryDate) == -1) {
+        while(ptr->next != NULL) {
+            if (Date_Compare(ptr->next->patient->entryDate, patient->entryDate) == -1) {
+                break;
+            }
             ptr = ptr->next;
         }
 
@@ -78,7 +81,7 @@ int List_InsertSorted(ListPtr list, const PatientPtr patient)
     }
     list->len++;
 
-    return 0;
+    return newNode;
 }
 
 void List_Print(ListPtr list)
