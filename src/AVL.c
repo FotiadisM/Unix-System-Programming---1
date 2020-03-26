@@ -213,23 +213,30 @@ int AVLNode_countPatients(const AVLNodePtr node, const char* disease, const char
     }
 }
 
-// int AVLNode_countNullPatients(AVLNodePtr node)
-// {
-//     int count = 0;
-//     ListNodePtr ptr = NULL;
+int AVLNode_countNullPatients(AVLNodePtr node, const char* disease)
+{
+    int count = 0;
+    ListNodePtr ptr = NULL;
 
-//     if(node == NULL) {
-//         return 0;
-//     }
+    if(node == NULL) {
+        return 0;
+    }
 
-//     ptr = node->list->head;
-//     while (ptr != NULL)
-//     {
-//         if(ptr->patient->exitDate == NULL) {
-//             count ++;
-//         }
-//         ptr = ptr->next;
-//     }
+    ptr = node->value;
+    while (ptr != NULL)
+    {
+        if (Date_Compare(ptr->patient->entryDate, node->key)) {
+            break;
+        }
 
-//     return (AVLNode_countNullPatients(node->left) + AVLNode_countNullPatients(node->right) + count);
-// }
+        if (!strcmp(ptr->patient->diseaseID, disease)){
+            if(ptr->patient->exitDate == NULL) {
+                count ++;
+            }
+
+        }
+        ptr = ptr->next;
+    }
+
+    return (AVLNode_countNullPatients(node->left, disease) + AVLNode_countNullPatients(node->right, disease) + count);
+}
