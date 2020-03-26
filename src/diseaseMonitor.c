@@ -43,6 +43,14 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
     }
     printf("\n");
 
+    node = list->head;
+    while (node != NULL)
+    {
+        Patient_Print(node->patient);
+        node = node->next;
+    }
+    printf("\n");
+
     free(dest);
     fclose(filePtr);
 
@@ -65,7 +73,7 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
 
     globalDiseaseStats(h1, d1, d2);
     globalDiseaseStats(h1, NULL, NULL);
-    diseaseFrequency(h1, "COVID-2019", NULL, d1, d2);
+    diseaseFrequency(h1, "H1N1", NULL, d1, d2);
     // numCurrentPatients(h1, NULL);
     // insertPatientRecord(list, h1, h2, "1234", "blah", "blah", "COVID-2019", "Greece", s1, NULL);
     // numCurrentPatients(h1, NULL);

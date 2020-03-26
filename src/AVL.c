@@ -166,17 +166,17 @@ AVLNodePtr AVLNode_Insert(AVLNodePtr node, const DatePtr key, const ListNodePtr 
     return node;
 }
 
-int AVLNode_countPatients(const AVLNodePtr node, const char* country, const DatePtr d1, const DatePtr d2)
+int AVLNode_countPatients(const AVLNodePtr node, const char* disease, const char* country, const DatePtr d1, const DatePtr d2)
 {
     if (node == NULL) {
         return 0;
     }
 
     if (Date_Compare(node->key, d2) == 1) {
-        return AVLNode_countPatients(node->left, country, d1, d2);
+        return AVLNode_countPatients(node->left, disease, country, d1, d2);
     }
     else if (Date_Compare(node->key, d1) == -1) {
-        return AVLNode_countPatients(node->right, country, d1, d2);
+        return AVLNode_countPatients(node->right, disease, country, d1, d2);
     }
     else {
         int count = 0;
@@ -188,7 +188,9 @@ int AVLNode_countPatients(const AVLNodePtr node, const char* country, const Date
                 if (Date_Compare(listNode->patient->entryDate, node->key)) {
                     break;
                 }
-                count++;
+                if (!strcmp(listNode->patient->diseaseID, disease)){
+                    count++;
+                }
                 listNode = listNode->next;
             }
         }
@@ -199,13 +201,15 @@ int AVLNode_countPatients(const AVLNodePtr node, const char* country, const Date
                     break;
                 }
                 if (!strcmp(listNode->patient->country, country)) {
-                    count++;
+                    if (!strcmp(listNode->patient->diseaseID, disease)){
+                        count++;
+                    }
                 }
                 listNode = listNode->next;
             }
         }
 
-        return (AVLNode_countPatients(node->left, country, d1, d2) + AVLNode_countPatients(node->right, country, d1, d2) + count);
+        return (AVLNode_countPatients(node->left, disease, country, d1, d2) + AVLNode_countPatients(node->right, disease, country, d1, d2) + count);
     }
 }
 

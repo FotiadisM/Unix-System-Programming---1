@@ -16,7 +16,7 @@ void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d
                         printf("disease: %s, patients: %d\n", nodePtr->entries[j]->key, nodePtr->entries[j]->tree->elements);
                     }
                     else {
-                        printf("disease: %s, patients: %d\n", nodePtr->entries[j]->key, AVLNode_countPatients(nodePtr->entries[j]->tree->root, NULL, d1, d2));
+                        printf("disease: %s, patients: %d\n", nodePtr->entries[j]->key, AVLNode_countPatients(nodePtr->entries[j]->tree->root, nodePtr->entries[j]->key, NULL, d1, d2));
                     }
 
                 }
@@ -31,11 +31,11 @@ void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* co
 {
     HashNodePtr nodePtr = &(ht->table[hash(disease) % ht->size]);
 
-    while(nodePtr != NULL) {
+    while (nodePtr != NULL) {
         for (int j=0; j < ht->bucketSize; j++) {
             if (nodePtr->entries[j] != NULL) {
                 if (!strcmp(nodePtr->entries[j]->key, disease)) {
-                    printf("patients: %d\n", AVLNode_countPatients(nodePtr->entries[j]->tree->root, country, d1, d2));
+                    printf("patients: %d\n", AVLNode_countPatients(nodePtr->entries[j]->tree->root, disease, country, d1, d2));
                     break;
                 }
             }
@@ -46,23 +46,23 @@ void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* co
 
 }
 
-// int recordPatientExit(ListPtr list, char* id, char* d2)
-// {
-//     ListNodePtr ptr = list->head;
+int recordPatientExit(ListPtr list, char* id, char* d2)
+{
+    ListNodePtr ptr = list->head;
 
-//     while(ptr != NULL) {
-//         if (!strcmp(ptr->patient->id, id)) {
-//             if((ptr->patient->exitDate = Date_Init(d2)) == NULL) {
-//                 perror("malloc failed");
-//                 return -1;
-//             }
-//             break;
-//         }
-//         ptr = ptr->next;
-//     }
+    while (ptr != NULL) {
+        if (!strcmp(ptr->patient->id, id)) {
+            if ((ptr->patient->exitDate = Date_Init(d2)) == NULL) {
+                perror("malloc failed");
+                return -1;
+            }
+            break;
+        }
+        ptr = ptr->next;
+    }
 
-//     return 0;
-// }
+    return 0;
+}
 
 // void numCurrentPatients(HashTablePtr ht, char* disease)
 // {
