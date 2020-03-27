@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <wordexp.h>
 
 #include "../include/fnclib.h"
 #include "../include/defines.h"
@@ -51,31 +52,75 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
 
 int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
 {
-    char s1[11], s2[11];
-    DatePtr d1, d2;
+    wordexp_t p;
+    DatePtr d1 = NULL, d2 = NULL;
 
-    strcpy(s1, "0-0-995");
-    strcpy(s2, "0-0-3000");
+    wordexp(line, &p, 0);
 
-    d1 = Date_Init(s1);
-    d2 = Date_Init(s2);
+    if (!strcmp(p.we_wordv[0], "/globalDiseaseStats"))
+    {
+        if (p.we_wordc == 1 || p.we_wordc == 3) {
 
-    strcpy(s1, "00-00-2005");
-    strcpy(s2, "00-00-3000");
+            if (p.we_wordc == 3) {
+                if((d1 = Date_Init(p.we_wordv[1])) == NULL || (d2 = Date_Init(p.we_wordv[2])) == NULL) {
+                    return -1;
+                }
+            }
 
-    globalDiseaseStats(h1, d1, d2);
-    globalDiseaseStats(h1, NULL, NULL);
-    diseaseFrequency(h1, "H1N1", NULL, d1, d2);
-    numCurrentPatients(h1, NULL);
-    insertPatientRecord(list, h1, h2, "1234", "blah", "blah", "COVID-2019", "Greece", s1, NULL);
-    numCurrentPatients(h1, NULL);
-    printf("---------\n");
-    recordPatientExit(list, "1234", s2);
-    printf("---------\n");
-    numCurrentPatients(h1, NULL);
+            globalDiseaseStats(h1, d1, d2);
 
-    free(d1);
-    free(d2);
+            if(d1 != NULL && d2 != NULL) {
+                free(d1);
+                free(d2);
+            }
+        }
+
+    }
+    else if (!strcmp(p.we_wordv[0], "/diseaseFrequency"))
+    {
+        if (p.we_wordc == 4 || p.we_wordc == 5) {
+            if((d1 = Date_Init(p.we_wordv[2])) == NULL || (d2 = Date_Init(p.we_wordv[3])) == NULL) {
+                return -1;
+            }
+
+            diseaseFrequency(h1, p.we_wordv[1], p.we_wordv[4], d1, d2);
+
+            free(d1);
+            free(d2);
+        }
+    }
+    else if (!strcmp(p.we_wordv[0], "/topk-Diseases"))
+    {
+
+    }
+    else if (!strcmp(p.we_wordv[0], "/topk-Countries"))
+    {
+
+    }
+    else if (!strcmp(p.we_wordv[0], "/insertPatientRecord"))
+    {
+        if ( p.we_wordc == 7 || p.we_wordc == 8) {
+            insertPatientRecord(list, h1, h2, p.we_wordv[1], p.we_wordv[2], p.we_wordv[3], p.we_wordv[4], p.we_wordv[5], p.we_wordv[6], p.we_wordv[7]);
+        }
+    }
+    else if (!strcmp(p.we_wordv[0], "/recordPatientExit"))
+    {
+        if (p.we_wordc == 3) {
+            recordPatientExit(list, p.we_wordv[1], p.we_wordv[2]);
+        }
+    }
+    else if (!strcmp(p.we_wordv[0], "/numCurrentPatients"))
+    {
+        if (p.we_wordc == 1 || p.we_wordc == 2) {
+            numCurrentPatients(h1, p.we_wordv[1]);
+        }
+    }
+    else {
+        printf("Unknown command: %s\n", p.we_wordv[0]);
+    }
+    printf("\n");
+
+    wordfree(&p);
 
     return 0;
 }

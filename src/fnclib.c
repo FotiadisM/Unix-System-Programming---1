@@ -24,7 +24,6 @@ void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d
             nodePtr = nodePtr->next;
         }
     }
-    printf("\n");
 }
 
 void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* country, const DatePtr d1, const DatePtr d2)
@@ -42,8 +41,6 @@ void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* co
         }
         nodePtr = nodePtr->next;
     }
-    printf("\n");
-
 }
 
 int recordPatientExit(ListPtr list, char* id, char* d2)
@@ -95,7 +92,6 @@ void numCurrentPatients(HashTablePtr ht, char* disease)
             nodePtr = nodePtr->next;
         }
     }
-    printf("\n");
 }
 
 int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* reccordID, char* fName, char* lName, char* disease, char* country, char* d1, char* d2)
@@ -148,7 +144,6 @@ int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* re
     }
     else {
         if((patient->exitDate = Date_Init(d2)) == NULL) {
-            perror("malloc failed");
             return -1;
         }
     }
@@ -162,6 +157,8 @@ int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* re
     if (HashTable_Insert(h2, patient->country, node) == -1) {
         return -1;
     }
+
+    printf("Pation Inserted\n");
 
     return 0;
 }

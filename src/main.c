@@ -86,17 +86,22 @@ int main(int argc, char *argv[])
         if (!strcmp(line, "/exit\n")) {
             break;
         }
-        if(DM_Run(line, list, diseaseHT, countryHT) == -1)
-        {
-            printf("DM_Run() failed, program will now exit\n");
+        if (strcmp(line, "\n")) {
 
-            free(line);
-            free(fileName);
-            HashTable_Close(diseaseHT);
-            HashTable_Close(countryHT);
-            List_Close(list, F_PATIENT);
+            strtok(line, "\n");
 
-            return -1;
+            if(DM_Run(line, list, diseaseHT, countryHT) == -1)
+            {
+                printf("DM_Run() failed, program will now exit\n");
+
+                free(line);
+                free(fileName);
+                HashTable_Close(diseaseHT);
+                HashTable_Close(countryHT);
+                List_Close(list, F_PATIENT);
+
+                return -1;
+            }
         }
     }
 
