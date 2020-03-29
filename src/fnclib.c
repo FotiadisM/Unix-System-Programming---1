@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../include/Queue.h"
+#include "../include/maxHeap.h"
 #include "../include/fnclib.h"
 
 void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d2)
@@ -43,6 +45,23 @@ void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* co
     }
 }
 
+void topk_Diseases(const HashTablePtr ht, const char* country, const int k, const DatePtr d1, const DatePtr d2)
+{
+    maxHeapPtr heap = NULL;
+
+    if ((heap = maxHeap_Init()) == NULL) {
+        return;
+    }
+
+    maxHeap_Insert(heap, "skata1", 1);
+    maxHeap_Insert(heap, "skata2", 2);
+    maxHeap_Insert(heap, "skata3", 3);
+    maxHeap_Insert(heap, "skata4", 4);
+
+    maxHeap_Close(heap);
+
+}
+
 int recordPatientExit(ListPtr list, char* id, char* d2)
 {
     ListNodePtr ptr = list->head;
@@ -57,6 +76,8 @@ int recordPatientExit(ListPtr list, char* id, char* d2)
         }
         ptr = ptr->next;
     }
+
+    printf("Exit date added\n");
 
     return 0;
 }
@@ -158,7 +179,7 @@ int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* re
         return -1;
     }
 
-    printf("Pation Inserted\n");
+    printf("Patient inserted\n");
 
     return 0;
 }

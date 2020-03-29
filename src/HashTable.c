@@ -31,7 +31,6 @@ HashEntryPtr HashEntry_Init(const char* key)
         return NULL;
     }
     strcpy(entry->key, key);
-    // entry->key = key;
 
     if((entry->tree = AVLTree_Init(entry->tree)) == NULL) {
         free(entry->key);
