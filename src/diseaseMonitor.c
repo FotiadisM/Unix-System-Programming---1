@@ -28,7 +28,7 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
 
     while ((patient = DM_GetPatient(filePtr)) != NULL)
     {
-        Patient_Print(patient);
+        // Patient_Print(patient);
 
         if ((node = List_InsertSorted(list, patient)) == NULL) {
             return -1;

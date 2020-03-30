@@ -101,6 +101,9 @@ int recordPatientExit(ListPtr list, char* id, char* d2)
 
     while (ptr != NULL) {
         if (!strcmp(ptr->patient->id, id)) {
+            if (ptr->patient->exitDate != NULL) {
+                free(ptr->patient->exitDate);
+            }
             if ((ptr->patient->exitDate = Date_Init(d2)) == NULL) {
                 perror("malloc failed");
                 return -1;
