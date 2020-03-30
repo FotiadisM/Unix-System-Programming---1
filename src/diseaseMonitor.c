@@ -109,7 +109,21 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
     }
     else if (!strcmp(p.we_wordv[0], "/topk-Countries"))
     {
+        if (p.we_wordc == 3 || p.we_wordc == 5) {
 
+            if (p.we_wordc == 5) {
+                if((d1 = Date_Init(p.we_wordv[3])) == NULL || (d2 = Date_Init(p.we_wordv[4])) == NULL) {
+                    return -1;
+                }
+            }
+
+            topk_Countries(h1, h2, p.we_wordv[2], atoi(p.we_wordv[1]), d1, d2);
+
+            if(d1 != NULL && d2 != NULL) {
+                free(d1);
+                free(d2);
+            }
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/insertPatientRecord"))
     {

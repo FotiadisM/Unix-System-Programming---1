@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
     while (getline(&line, &len, stdin) != -1)
     {
         if (!strcmp(line, "/exit\n")) {
+            printf("exiting\n");
             break;
         }
         if (strcmp(line, "\n")) {

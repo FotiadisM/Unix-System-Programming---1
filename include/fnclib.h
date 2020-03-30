@@ -9,6 +9,8 @@ void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* co
 
 void topk_Diseases(const HashTablePtr ht, const char* country, const int k, const DatePtr d1, const DatePtr d2);
 
+void topk_Countries(const HashTablePtr h1, const HashTablePtr h2, const char *disease, const int k, const DatePtr d1, const DatePtr d2);
+
 int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* reccordID, char* dName, char* lName, char* disease, char* country, char* d1, char* d2);
 
 int recordPatientExit(ListPtr list, char* id, char* d2);

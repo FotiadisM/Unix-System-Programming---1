@@ -15,12 +15,11 @@ void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d
             for (int j=0; j < ht->bucketSize; j++) {
                 if (nodePtr->entries[j] != NULL) {
                     if (d2 == NULL) {
-                        printf("disease: %s, patients: %d\n", nodePtr->entries[j]->key, nodePtr->entries[j]->tree->elements);
+                        printf("%s %d\n", nodePtr->entries[j]->key, nodePtr->entries[j]->tree->elements);
                     }
                     else {
-                        printf("disease: %s, patients: %d\n", nodePtr->entries[j]->key, AVLNode_countPatients(nodePtr->entries[j]->tree->root, nodePtr->entries[j]->key, NULL, d1, d2));
+                        printf("%s %d\n", nodePtr->entries[j]->key, AVLNode_countPatients(nodePtr->entries[j]->tree->root, nodePtr->entries[j]->key, NULL, d1, d2));
                     }
-
                 }
             }
             nodePtr = nodePtr->next;
@@ -30,36 +29,70 @@ void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d
 
 void diseaseFrequency(const HashTablePtr ht, const char* disease, const char* country, const DatePtr d1, const DatePtr d2)
 {
-    HashNodePtr nodePtr = &(ht->table[hash(disease) % ht->size]);
+    AVLTreePtr tree = NULL;
 
-    while (nodePtr != NULL) {
-        for (int j=0; j < ht->bucketSize; j++) {
-            if (nodePtr->entries[j] != NULL) {
-                if (!strcmp(nodePtr->entries[j]->key, disease)) {
-                    printf("patients: %d\n", AVLNode_countPatients(nodePtr->entries[j]->tree->root, disease, country, d1, d2));
-                    break;
-                }
-            }
-        }
-        nodePtr = nodePtr->next;
+    if ((tree = HashTable_LocateKey(&(ht->table[hash(disease) % ht->size]), disease, ht->bucketSize)) == NULL) {
+        printf("Disease not found\n");
+        return;
     }
+    printf("%s %d\n", disease, AVLNode_countPatients(tree->root, disease, country, d1, d2));
+
 }
 
 void topk_Diseases(const HashTablePtr ht, const char* country, const int k, const DatePtr d1, const DatePtr d2)
 {
     maxHeapPtr heap = NULL;
+    // HashNodePtr nodePtr = NULL;
 
     if ((heap = maxHeap_Init()) == NULL) {
         return;
     }
 
-    maxHeap_Insert(heap, "skata1", 1);
-    maxHeap_Insert(heap, "skata2", 2);
-    maxHeap_Insert(heap, "skata3", 3);
-    maxHeap_Insert(heap, "skata4", 4);
+    maxHeap_Close(heap);
+}
+
+void topk_Countries(const HashTablePtr h1, const HashTablePtr h2, const char *disease, const int k, DatePtr d1, DatePtr d2)
+{
+    char str[11];   // BARIEMAI NA KANW MALLOC
+    AVLTreePtr tree = NULL;
+    maxHeapPtr heap = NULL;
+    HashNodePtr nodePtr = &(h1->table[hash(disease) % h1->size]);;
+
+    if ((heap = maxHeap_Init()) == NULL) {
+        return;
+    }
+
+    if (d1 == NULL || d2 == NULL) {
+        strcpy(str, "0-0-0");       // NEEDED FOR AVLNode_countPatients()
+        d1 = Date_Init(str);        //
+        strcpy(str, "0-0-9999");
+        d2 = Date_Init(str);
+    }
+
+    if((tree = HashTable_LocateKey(&(h1->table[hash(disease) % h1->size]), disease, h1->bucketSize)) == NULL) {
+        printf("Disease not found\n");
+        return;
+    }
+
+    for (int i=0; i < h2->size; i++) {
+        nodePtr = &(h2->table[i]);
+        while (nodePtr != NULL) {
+            for (int j=0; j < h2->bucketSize; j++) {
+                if (nodePtr->entries[j] != NULL) {
+                    int count = AVLNode_countPatients(tree->root, disease, nodePtr->entries[j]->key, d1, d2);
+                    maxHeap_Insert(heap, nodePtr->entries[j]->key, count);
+                }
+            }
+            nodePtr = nodePtr->next;
+        }
+    }
+
+    if (d1 != NULL || d2 != NULL) {
+        free(d1);
+        free(d2);
+    }
 
     maxHeap_Close(heap);
-
 }
 
 int recordPatientExit(ListPtr list, char* id, char* d2)
@@ -77,7 +110,7 @@ int recordPatientExit(ListPtr list, char* id, char* d2)
         ptr = ptr->next;
     }
 
-    printf("Exit date added\n");
+    printf("Record updated\n");
 
     return 0;
 }
@@ -92,7 +125,7 @@ void numCurrentPatients(HashTablePtr ht, char* disease)
             while (nodePtr != NULL) {
                 for (int j=0; j < ht->bucketSize; j++) {
                     if (nodePtr->entries[j] != NULL) {
-                        printf("Disease: %s, patients: %d\n", nodePtr->entries[j]->key, AVLNode_countNullPatients(nodePtr->entries[j]->tree->root, nodePtr->entries[j]->key));
+                        printf("%s %d\n", nodePtr->entries[j]->key, AVLNode_countNullPatients(nodePtr->entries[j]->tree->root, nodePtr->entries[j]->key));
                     }
                 }
                 nodePtr = nodePtr->next;
@@ -105,7 +138,7 @@ void numCurrentPatients(HashTablePtr ht, char* disease)
             for (int j=0; j < ht->bucketSize; j++) {
                 if (nodePtr->entries[j] != NULL) {
                     if (!strcmp(nodePtr->entries[j]->key, disease)) {
-                        printf("Disease: %s, patients: %d\n", disease, AVLNode_countNullPatients(nodePtr->entries[j]->tree->root, disease));
+                        printf("%s %d\n", disease, AVLNode_countNullPatients(nodePtr->entries[j]->tree->root, disease));
                         break;
                     }
                 }
@@ -179,7 +212,7 @@ int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* re
         return -1;
     }
 
-    printf("Patient inserted\n");
+    printf("Record added\n");
 
     return 0;
 }

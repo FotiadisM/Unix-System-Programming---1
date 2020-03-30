@@ -96,6 +96,59 @@ int CBTInsert(maxHeapPtr heap, maxHeapNodePtr newNode)
     return 0;
 }
 
+int maxHeapNode_Swap(maxHeapNodePtr node1,maxHeapNodePtr node2)
+{
+    char *str = NULL;
+    int count = node1->count;
+
+    if ((str = malloc(strlen(node1->key) + 1)) == NULL) {
+        perror("malloc failed");
+        return -1;
+    }
+    strcpy(str, node1->key);
+
+    node1->count = node2->count;
+    if ((node1->key = realloc(node1->key, strlen(node2->key) + 1)) == NULL) {
+        perror("realloc failed");
+        return -1;
+    }
+    strcpy(node1->key, node2->key);
+
+    node2->count = count;
+    if ((node2->key = realloc(node2->key, strlen(str) + 1)) == NULL) {
+        perror("realloc failed");
+        return -1;
+    }
+    strcpy(node2->key, str);
+
+    free(str);
+
+    return 0;
+}
+
+void maxHeap_Rebalance(maxHeapNodePtr node)
+{
+    if (node->left != NULL)
+    {
+        maxHeap_Rebalance(node->left);
+        if (node->left->count > node->count) {
+            if (maxHeapNode_Swap(node, node->left) == -1) {
+                printf("maxHeap_Rebalance() failed\n");
+            }
+        }
+    }
+
+    if (node->right != NULL)
+    {
+        maxHeap_Rebalance(node->right);
+        if (node->right->count > node->count) {
+            if (maxHeapNode_Swap(node, node->right) == -1) {
+                printf("maxHeap_Rebalance() failed\n");
+            }
+        }
+    }
+}
+
 int maxHeap_Insert(maxHeapPtr heap, const char* key, const int count)
 {
     maxHeapNodePtr newNode = NULL;
@@ -107,6 +160,10 @@ int maxHeap_Insert(maxHeapPtr heap, const char* key, const int count)
     if (CBTInsert(heap, newNode) == -1) {
         return -1;
     }
+
+    maxHeap_Rebalance(heap->root);
+
+    heap->len++;
 
     return 0;
 }

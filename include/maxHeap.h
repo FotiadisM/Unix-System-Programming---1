@@ -19,9 +19,11 @@ maxHeapNodePtr maxHeapNode_Init(const char* str, int count);
 
 maxHeapPtr maxHeap_Init();
 
-void maxHeap_Close();
+void maxHeap_Close(maxHeapPtr heap);
 
-void maxHeapNode_Close();
+void maxHeapNode_Close(maxHeapNodePtr node);
+
+int maxHeapNode_Swap(maxHeapNodePtr node1,maxHeapNodePtr node2);
 
 int CBTInsert(maxHeapPtr heap, maxHeapNodePtr newNode);
 
