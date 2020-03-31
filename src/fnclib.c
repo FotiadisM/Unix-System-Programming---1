@@ -13,7 +13,7 @@ void globalDiseaseStats(const HashTablePtr ht, const DatePtr d1, const DatePtr d
         while (nodePtr != NULL) {
             for (int j=0; j < ht->bucketSize; j++) {
                 if (nodePtr->entries[j] != NULL) {
-                    if (d2 == NULL) {
+                    if (d1 == NULL || d2 == NULL) {
                         printf("%s %d\n", nodePtr->entries[j]->key, nodePtr->entries[j]->tree->elements);
                     }
                     else {
@@ -47,7 +47,12 @@ void topk_Diseases(const HashTablePtr h1, const HashTablePtr h2, const char* cou
         return;
     }
 
-    // printf("MERS-COV 3\nSARS-1 2\n");
+    for(int i=0; i < k; i++) {
+        if (maxHeapNode_Remove(heap) == -1) {
+            maxHeap_Close(heap);
+            return;
+        }
+    }
 
     maxHeap_Close(heap);
 }
@@ -61,7 +66,12 @@ void topk_Countries(const HashTablePtr h1, const HashTablePtr h2, const char *di
         return;
     }
 
-    // printf("Australia 3\nEgypt 2\n");
+    for(int i=0; i < k; i++) {
+        if (maxHeapNode_Remove(heap) == -1) {
+            maxHeap_Close(heap);
+            return;
+        }
+    }
 
     maxHeap_Close(heap);
 }
@@ -218,7 +228,6 @@ maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const cha
         }
         strcpy(str, "0-0-9999");
         if ((d2 = Date_Init(str)) == NULL) {
-            free(d1);
             free(heap);
             return NULL;
         }
@@ -226,7 +235,6 @@ maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const cha
 
     if((tree = HashTable_LocateKey(nodePtr, key, h1->bucketSize)) == NULL) {
         printf("Disease not found\n");
-        free(d1); free(d2);
         free(heap);
         return NULL;
     }
@@ -238,7 +246,6 @@ maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const cha
                 if (nodePtr->entries[j] != NULL) {
                     if (maxHeap_Insert(heap, nodePtr->entries[j]->key, AVLNode_countPatients(tree->root, key, nodePtr->entries[j]->key, d1, d2)) == -1) {
                         printf("maxHeap_Insert() failed\n");
-                        free(d1); free(d2);
                         maxHeap_Close(heap);
                         return NULL;
                     }
@@ -246,11 +253,6 @@ maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const cha
             }
             nodePtr = nodePtr->next;
         }
-    }
-
-    if (d1 != NULL || d2 != NULL) {
-        free(d1);
-        free(d2);
     }
 
     return heap;

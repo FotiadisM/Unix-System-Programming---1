@@ -96,32 +96,88 @@ int CBTInsert(maxHeapPtr heap, maxHeapNodePtr newNode)
     return 0;
 }
 
+maxHeapNodePtr CBTGetLast(maxHeapPtr heap)
+{
+    QueuePtr queue = NULL;
+    maxHeapNodePtr node = NULL, tmp = NULL;
+
+    if ((queue = Queue_Init()) == NULL) {
+        return NULL;
+    }
+
+    if (Queue_Insert(queue, heap->root) == -1) {
+        Queue_Close(queue);
+        return NULL;
+    }
+
+    while (queue->size != 0)
+    {
+        node = Queue_Pop(queue);
+        if (node->left != NULL) {
+            if (Queue_Insert(queue, node->left) == -1) {
+                Queue_Close(queue);
+                return NULL;
+            }
+        }
+        if (node->right != NULL) {
+            if (Queue_Insert(queue, node->right) == -1) {
+                Queue_Close(queue);
+                return NULL;
+            }
+        }
+    }
+
+    // spaghetti_start
+    if (Queue_Insert(queue, heap->root) == -1) {
+        Queue_Close(queue);
+        return NULL;
+    }
+
+    while (queue->size != 0)
+    {
+        tmp = Queue_Pop(queue);
+
+        if (tmp->left != NULL)
+        {
+            if (!strcmp(tmp->left->key, node->key)) {
+                tmp->left = NULL;
+                break;
+            }
+            if (Queue_Insert(queue, tmp->left) == -1) {
+                Queue_Close(queue);
+                return NULL;
+            }
+        }
+        if (tmp->right != NULL)
+        {
+            if (!strcmp(tmp->right->key, node->key)) {
+                tmp->right = NULL;
+                break;
+            }
+            if (Queue_Insert(queue, tmp->right) == -1) {
+                Queue_Close(queue);
+                return NULL;
+            }
+        }
+
+    }
+    // spaghetti_end
+
+    Queue_Close(queue);
+
+    return node;
+}
+
 int maxHeapNode_Swap(maxHeapNodePtr node1,maxHeapNodePtr node2)
 {
-    char *str = NULL;
+    char *str = node1->key;
     int count = node1->count;
 
-    if ((str = malloc(strlen(node1->key) + 1)) == NULL) {
-        perror("malloc failed");
-        return -1;
-    }
-    strcpy(str, node1->key);
+    node1->key = node2->key;
+    node2->key = str;
 
     node1->count = node2->count;
-    if ((node1->key = realloc(node1->key, strlen(node2->key) + 1)) == NULL) {
-        perror("realloc failed");
-        return -1;
-    }
-    strcpy(node1->key, node2->key);
-
     node2->count = count;
-    if ((node2->key = realloc(node2->key, strlen(str) + 1)) == NULL) {
-        perror("realloc failed");
-        return -1;
-    }
-    strcpy(node2->key, str);
-
-    free(str);
 
     return 0;
 }
@@ -164,6 +220,26 @@ int maxHeap_Insert(maxHeapPtr heap, const char* key, const int count)
     maxHeap_Rebalance(heap->root);
 
     heap->len++;
+
+    return 0;
+}
+
+int maxHeapNode_Remove(maxHeapPtr heap)
+{
+    maxHeapNodePtr node = NULL;
+
+    if ((node = CBTGetLast(heap)) == NULL) {
+        printf("CBGGetLast() Error\n");
+        return -1;
+    }
+
+    maxHeapNode_Swap(heap->root, node);
+
+    printf("%s %d\n", node->key, node->count);
+    free(node->key);
+    free(node);
+
+    maxHeap_Rebalance(heap->root);
 
     return 0;
 }

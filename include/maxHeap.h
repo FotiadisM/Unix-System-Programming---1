@@ -29,6 +29,10 @@ int maxHeapNode_Swap(maxHeapNodePtr node1,maxHeapNodePtr node2);
 
 int CBTInsert(maxHeapPtr heap, maxHeapNodePtr newNode);
 
+maxHeapNodePtr CBTGetLast(maxHeapPtr heap);
+
 int maxHeap_Insert(maxHeapPtr heap, const char* key, const int count);
+
+int maxHeapNode_Remove(maxHeapPtr heap);
 
 #endif

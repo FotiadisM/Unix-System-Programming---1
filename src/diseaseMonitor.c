@@ -99,7 +99,7 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
                 }
             }
 
-            topk_Diseases(h1, h2, p.we_wordv[1], atoi(p.we_wordv[2]), d1, d2);
+            topk_Diseases(h1, h2, p.we_wordv[2], atoi(p.we_wordv[1]), d1, d2);
 
             if(d1 != NULL && d2 != NULL) {
                 free(d1);
