@@ -32,7 +32,7 @@ void Queue_Close(QueuePtr q)
     free(q);
 }
 
-int Queue_Insert(QueuePtr q, maxHeapNodePtr item)
+int Queue_Insert(QueuePtr q, struct maxHeapNode *item)
 {
     QueueNodePtr node = NULL;
 
@@ -56,10 +56,9 @@ int Queue_Insert(QueuePtr q, maxHeapNodePtr item)
 
     return 0;
 }
-
-maxHeapNodePtr Queue_Pop(QueuePtr q)
+struct maxHeapNode *Queue_Pop(QueuePtr q)
 {
-    maxHeapNodePtr item;
+    struct maxHeapNode *item;
     QueueNodePtr node = q->head;
 
     q->head = node->next;

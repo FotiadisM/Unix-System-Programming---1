@@ -1,12 +1,14 @@
 #ifndef MAXHEAP_H
 #define MAXHEAP_H
 
-struct maxHeapNode {
+typedef struct maxHeapNode {
     char* key;
     int count;
     struct maxHeapNode *left;
     struct maxHeapNode *right;
-};
+} maxHeapNode;
+
+typedef maxHeapNode* maxHeapNodePtr;
 
 typedef struct maxHeap {
     int len;
