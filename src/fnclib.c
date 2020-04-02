@@ -42,7 +42,7 @@ void topk_Diseases(const HashTablePtr h1, const HashTablePtr h2, const char* cou
 {
     maxHeapPtr heap = NULL;
 
-    if ((heap = topk_InitHeap(h2, h1, country, d1, d2)) == NULL) {
+    if ((heap = topk_InitHeap(h2, h1, country, d1, d2, _Disease)) == NULL) {
         printf("Error\n");
         return;
     }
@@ -61,7 +61,7 @@ void topk_Countries(const HashTablePtr h1, const HashTablePtr h2, const char *di
 {
     maxHeapPtr heap = NULL;
 
-    if ((heap = topk_InitHeap(h1, h2, disease, d1, d2)) == NULL) {
+    if ((heap = topk_InitHeap(h1, h2, disease, d1, d2, t_Countries)) == NULL) {
         printf("Error\n");
         return;
     }
@@ -85,7 +85,7 @@ int recordPatientExit(ListPtr list, char* id, char* d2)
 
             if (ptr->patient->exitDate != NULL) {
                 printf("Record already has an exit date\n");
-                break;
+                return -1;
             }
 
             if ((ptr->patient->exitDate = Date_Init(d2)) == NULL) {
@@ -209,7 +209,7 @@ int insertPatientRecord(ListPtr list, HashTablePtr h1, HashTablePtr h2, char* re
     return 0;
 }
 
-maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const char* key, DatePtr d1, DatePtr d2)
+maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const char* key, DatePtr d1, DatePtr d2, const int flag)
 {
     char str[11];   // BARIEMAI NA KANW MALLOC
     maxHeapPtr heap = NULL;
@@ -235,6 +235,7 @@ maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const cha
 
     if((tree = HashTable_LocateKey(nodePtr, key, h1->bucketSize)) == NULL) {
         printf("Disease not found\n");
+        free(d1); free(d2);
         free(heap);
         return NULL;
     }
@@ -243,17 +244,30 @@ maxHeapPtr topk_InitHeap(const HashTablePtr h1, const HashTablePtr h2, const cha
         nodePtr = &(h2->table[i]);
         while (nodePtr != NULL) {
             for (int j=0; j < h2->bucketSize; j++) {
-                if (nodePtr->entries[j] != NULL) {
-                    if (maxHeap_Insert(heap, nodePtr->entries[j]->key, AVLNode_countPatients(tree->root, key, nodePtr->entries[j]->key, d1, d2)) == -1) {
-                        printf("maxHeap_Insert() failed\n");
-                        maxHeap_Close(heap);
-                        return NULL;
+                if (nodePtr->entries[j] != NULL)
+                {
+                    if (flag == _Disease) {
+                        if (maxHeap_Insert(heap, nodePtr->entries[j]->key, AVLNode_countPatients(tree->root, nodePtr->entries[j]->key, key, d1, d2)) == -1) {
+                            printf("maxHeap_Insert() failed\n");
+                            maxHeap_Close(heap);
+                            return NULL;
+                        }
+                    }
+                    else {
+                        if (maxHeap_Insert(heap, nodePtr->entries[j]->key, AVLNode_countPatients(tree->root, key, nodePtr->entries[j]->key, d1, d2)) == -1) {
+                            printf("maxHeap_Insert() failed\n");
+                            maxHeap_Close(heap);
+                            return NULL;
+                        }
                     }
                 }
             }
             nodePtr = nodePtr->next;
         }
     }
+
+    free(d1);
+    free(d2);
 
     return heap;
 }

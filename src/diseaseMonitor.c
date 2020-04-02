@@ -28,20 +28,26 @@ int DM_Init(const char* fileName, ListPtr list, HashTablePtr h1, HashTablePtr h2
 
     while ((patient = DM_GetPatient(filePtr)) != NULL)
     {
-        // Patient_Print(patient);
+        if (!DM_ValidatePatient(list, patient)) {
+            Patient_Print(patient);
 
-        if ((node = List_InsertSorted(list, patient)) == NULL) {
-            return -1;
+            if ((node = List_InsertSorted(list, patient)) == NULL) {
+                return -1;
+            }
+
+            if (HashTable_Insert(h1, patient->diseaseID, node) == -1) {
+                return -1;
+            }
+
+            if (HashTable_Insert(h2, patient->country, node) == -1) {
+                return -1;
+            }
         }
-
-        if (HashTable_Insert(h1, patient->diseaseID, node) == -1) {
-            return -1;
-        }
-
-        if (HashTable_Insert(h2, patient->country, node) == -1) {
-            return -1;
+        else {
+            Patient_Close(patient);
         }
     }
+    printf("%d\n", list->len);
     printf("\n");
 
     free(dest);
@@ -74,7 +80,9 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
                 free(d2);
             }
         }
-
+        else {
+            printf("You need to include both entry and exit dates\n");
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/diseaseFrequency"))
     {
@@ -88,6 +96,9 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
             free(d1);
             free(d2);
         }
+        else {
+            printf("Wrong input\n");
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/topk-Diseases"))
     {
@@ -100,11 +111,9 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
             }
 
             topk_Diseases(h1, h2, p.we_wordv[2], atoi(p.we_wordv[1]), d1, d2);
-
-            if(d1 != NULL && d2 != NULL) {
-                free(d1);
-                free(d2);
-            }
+        }
+        else {
+            printf("You need to include both entry and exit dates\n");
         }
     }
     else if (!strcmp(p.we_wordv[0], "/topk-Countries"))
@@ -118,11 +127,9 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
             }
 
             topk_Countries(h1, h2, p.we_wordv[2], atoi(p.we_wordv[1]), d1, d2);
-
-            if(d1 != NULL && d2 != NULL) {
-                free(d1);
-                free(d2);
-            }
+        }
+        else {
+            printf("You need to include both entry and exit dates\n");
         }
     }
     else if (!strcmp(p.we_wordv[0], "/insertPatientRecord"))
@@ -130,17 +137,26 @@ int DM_Run(char* line, ListPtr list, HashTablePtr h1, HashTablePtr h2)
         if ( p.we_wordc == 7 || p.we_wordc == 8) {
             insertPatientRecord(list, h1, h2, p.we_wordv[1], p.we_wordv[2], p.we_wordv[3], p.we_wordv[4], p.we_wordv[5], p.we_wordv[6], p.we_wordv[7]);
         }
+        else {
+            printf("Wrong input\n");
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/recordPatientExit"))
     {
         if (p.we_wordc == 3) {
             recordPatientExit(list, p.we_wordv[1], p.we_wordv[2]);
         }
+        else {
+            printf("Wrong input\n");
+        }
     }
     else if (!strcmp(p.we_wordv[0], "/numCurrentPatients"))
     {
         if (p.we_wordc == 1 || p.we_wordc == 2) {
             numCurrentPatients(h1, p.we_wordv[1]);
+        }
+        else {
+            printf("Wrong input\n");
         }
     }
     else {
@@ -172,4 +188,36 @@ PatientPtr DM_GetPatient(FILE *filePtr)
     free(line);
 
     return patient;
+}
+
+int DM_PatientExist(const ListPtr list, const PatientPtr patient)
+{
+    ListNodePtr node = list->head;
+
+    // bariemai na ftiaksw hash table sorry 
+
+    while (node != NULL)
+    {
+        if (!strcmp(node->patient->id, patient->id))
+        {
+            return -1;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int DM_ValidatePatient(const ListPtr list, const PatientPtr patient)
+{
+    if (DM_PatientExist(list, patient)) {
+        return -1;
+    }
+    else if (patient->exitDate != NULL) {
+        if (Date_Compare(patient->exitDate, patient->entryDate) == -1) {
+            return -1;
+        }
+    }
+
+    return 0;
 }
